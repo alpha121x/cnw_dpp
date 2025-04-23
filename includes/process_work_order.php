@@ -1,7 +1,8 @@
 <?php
 // Start session and include database connection
 session_start();
-require_once 'db_connect.php';
+require_once '../config/database.php';
+require_once 'functions.php';
 
 // Function to sanitize input data
 function sanitize($data) {
@@ -79,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             // Prepare statement for scope items
             $stmt = $pdo->prepare("
-                INSERT INTO work_order_scope_items (
+                INSERT INTO scope_items (
                     work_order_id, description, quantity, unit
                 ) VALUES (?, ?, ?, ?)
             ");
@@ -108,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         
         // Set success message
         $_SESSION['success_message'] = 'Work order created successfully';
-        header('Location: index.php?page=work_orders');
+        header('Location: ../index.php?page=work_orders');
         exit;
 
     } catch (Exception $e) {
@@ -117,13 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         
         // Set error message
         $_SESSION['error_message'] = 'Error creating work order: ' . $e->getMessage();
-        header('Location: index.php?page=create_work_order');
+        header('Location: ../index.php?page=work_orders');
         exit;
     }
 } else {
     // Invalid request
     $_SESSION['error_message'] = 'Invalid request';
-    header('Location: index.php?page=work_orders');
+    header('Location: ../index.php?page=work_orders');
     exit;
 }
 ?>
