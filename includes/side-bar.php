@@ -20,6 +20,11 @@
                 <i class="bi bi-circle"></i><span>Work Orders Issuance</span>
             </a>
         </li>
+        <li>
+            <a href="create_work_orders.php">
+                <i class="bi bi-circle"></i><span>Create Work Orders</span>
+            </a>
+        </li>
     </ul>
   </li><!-- End Components Nav -->
 

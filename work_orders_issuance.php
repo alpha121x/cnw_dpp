@@ -1,3 +1,30 @@
+<?php
+session_start();
+require_once 'services/db_config.php'; // From artifact 026eed84-6bfd-4910-9bac-46c7d61d830f
+
+// Redirect to login if not authenticated
+if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
+    header("Location: login.php");
+    exit();
+}
+
+// Fetch work orders
+try {
+    $stmt = $pdo->query("SELECT id, cost, date_of_commencement, time_limit FROM public.tbl_work_orders");
+    $work_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $_SESSION['error'] = "Error fetching work orders: " . $e->getMessage();
+}
+
+// Fetch contractors for dropdown
+try {
+    $stmt = $pdo->query("SELECT id, name FROM public.tbl_contractors");
+    $contractors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $_SESSION['error'] = "Error fetching contractors: " . $e->getMessage();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,6 +53,16 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Work Orders Issuance</h5>
+              <?php
+              if (isset($_SESSION['error'])) {
+                  echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
+                  unset($_SESSION['error']);
+              }
+              if (isset($_SESSION['success'])) {
+                  echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
+                  unset($_SESSION['success']);
+              }
+              ?>
               <table id="workOrderTable" class="table table-bordered table-striped">
                 <thead>
                   <tr>
@@ -37,61 +74,30 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Sample Data -->
-                  <tr>
-                    <td>1</td>
-                    <td>WO-2025-001</td>
-                    <td>2025-01-15</td>
-                    <td>
-                      <select class="form-select form-select-sm contractor-select">
-                        <option value="" disabled selected>Select Contractor</option>
-                        <option value="ABC Construction">ABC Construction</option>
-                        <option value="XYZ Builders">XYZ Builders</option>
-                        <option value="Contractor Group">Contractor Group</option>
-                        <option value="PQR Contractors">PQR Contractors</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button class="btn btn-primary btn-sm issue-btn me-1">Issue</button>
-                      <a href="assets/dummy_files/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>WO-2025-002</td>
-                    <td>2025-02-01</td>
-                    <td>
-                      <select class="form-select form-select-sm contractor-select">
-                        <option value="" disabled selected>Select Contractor</option>
-                        <option value="ABC Construction">ABC Construction</option>
-                        <option value="XYZ Builders">XYZ Builders</option>
-                        <option value="Contractor Group">Contractor Group</option>
-                        <option value="PQR Contractors">PQR Contractors</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button class="btn btn-primary btn-sm issue-btn me-1">Issue</button>
-                      <a href="assets/dummy_files/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>WO-2025-003</td>
-                    <td>2025-03-10</td>
-                    <td>
-                      <select class="form-select form-select-sm contractor-select">
-                        <option value="" disabled selected>Select Contractor</option>
-                        <option value="ABC Construction">ABC Construction</option>
-                        <option value="XYZ Builders">XYZ Builders</option>
-                        <option value="Contractor Group">Contractor Group</option>
-                        <option value="PQR Contractors">PQR Contractors</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button class="btn btn-primary btn-sm issue-btn me-1">Issue</button>
-                      <a href="assets/dummy_files/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
-                    </td>
-                  </tr>
+                  <?php if (!empty($work_orders)): ?>
+                    <?php foreach ($work_orders as $index => $order): ?>
+                      <tr>
+                        <td><?php echo $index + 1; ?></td>
+                        <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
+                        <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
+                        <td>
+                          <select class="form-select form-select-sm contractor-select" data-work-order-id="<?php echo $order['id']; ?>" name="contractor_id" required>
+                            <option value="" disabled selected>Select Contractor</option>
+                            <?php foreach ($contractors as $contractor): ?>
+                              <option value="<?php echo $contractor['id']; ?>">
+                                <?php echo htmlspecialchars($contractor['name']); ?>
+                              </option>
+                            <?php endforeach; ?>
+                          </select>
+                        </td>
+                        <td>
+                          <a href="assets/pdfs/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php else: ?>
+                    <tr><td colspan="5">No work orders found.</td></tr>
+                  <?php endif; ?>
                 </tbody>
               </table>
             </div>
@@ -107,37 +113,6 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <?php include 'includes/footer-src-files.php'; ?>
-  <script>
-    $(document).ready(function() {
-      $('#workOrderTable').DataTable({
-        "responsive": true,
-        "paging": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "columnDefs": [
-          { "orderable": false, "targets": [3, 4] } // Disable sorting on Contractor and Action columns
-        ]
-      });
-
-      // Handle Issue button click
-      $('#workOrderTable').on('click', '.issue-btn', function() {
-        var row = $(this).closest('tr');
-        var rowData = $('#workOrderTable').DataTable().row(row).data();
-        var workOrder = rowData[1];
-        var contractor = row.find('.contractor-select').val();
-        
-        if (!contractor) {
-          alert('Please select a contractor before issuing the work order.');
-          return;
-        }
-        
-        alert('Work Order ' + workOrder + ' issued to: ' + contractor);
-        // Add your issue handling logic here (e.g., send data to server)
-      });
-    });
-  </script>
-
 </body>
 
 </html>
