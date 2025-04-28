@@ -1,0 +1,9 @@
+<script src="js/js/highcharts.js"></script>
+    <script src="js/js/modules/map.js"></script>
+
+    <!--<script src="js/js/modules/data.js"></script>-->
+    <script src="js/js/modules/exporting.js"></script>
+    <script src="js/js/modules/heatmap.js"></script>
+    <script src="script/ang_controller.js"></script>
+    <script type="text/javascript" src="script/highmaps_logic.js"></script>
+    <script src="script/genChart.js"></script>
