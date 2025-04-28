@@ -31,7 +31,7 @@
                   <tr>
                     <th>Sr</th>
                     <th>Work Order</th>
-                    <th>Date of Commencement</th>
+                    <th>Date of Issuance</th>
                     <th>Name of Contractor</th>
                     <th>Action</th>
                   </tr>
@@ -53,7 +53,7 @@
                     </td>
                     <td>
                       <button class="btn btn-primary btn-sm issue-btn me-1">Issue</button>
-                      <a href="/pdfs/work_order_WO-2025-001.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
+                      <a href="assets/dummy_files/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
                     </td>
                   </tr>
                   <tr>
@@ -71,7 +71,7 @@
                     </td>
                     <td>
                       <button class="btn btn-primary btn-sm issue-btn me-1">Issue</button>
-                      <a href="/pdfs/work_order_WO-2025-002.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
+                      <a href="assets/dummy_files/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
                     </td>
                   </tr>
                   <tr>
@@ -89,7 +89,7 @@
                     </td>
                     <td>
                       <button class="btn btn-primary btn-sm issue-btn me-1">Issue</button>
-                      <a href="/pdfs/work_order_WO-2025-003.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
+                      <a href="assets/dummy_files/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
                     </td>
                   </tr>
                 </tbody>
