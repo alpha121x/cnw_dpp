@@ -36,6 +36,7 @@ $(document).ready(function() {
   });
 
   $(document).ready(function() {
+    // Initialize DataTable
     $('#workOrderTable').DataTable({
       "responsive": true,
       "paging": true,
@@ -47,18 +48,26 @@ $(document).ready(function() {
       ]
     });
 
-    // Handle contractor dropdown change
+    // Handle contractor dropdown change with confirmation
     $('#workOrderTable').on('change', '.contractor-select', function() {
       var workOrderId = $(this).data('work-order-id');
       var contractorId = $(this).val();
+      var contractorName = $(this).find('option:selected').data('contractor-name');
 
       if (!contractorId) {
         alert('Please select a valid contractor.');
         return;
       }
 
+      // Show confirmation dialog
+      if (!confirm('Are you sure you want to issue work order WO-' + ('000' + workOrderId).slice(-3) + ' to ' + contractorName + '?')) {
+        $(this).val(''); // Reset dropdown if user cancels
+        return;
+      }
+
+      // AJAX request to update issuance
       $.ajax({
-        url: 'services/update-work-order-issuance.php',
+        url: 'services/update_work_order_issuance.php',
         type: 'POST',
         data: {
           work_order_id: workOrderId,
@@ -67,13 +76,19 @@ $(document).ready(function() {
         success: function(response) {
           var result = JSON.parse(response);
           if (result.success) {
-            alert('Work order WO-' + ('000' + workOrderId).slice(-3) + ' assigned to contractor successfully.');
+            $('#successToastMessage').text('Work order WO-' + ('000' + workOrderId).slice(-3) + ' assigned to ' + contractorName + ' successfully.');
+            var successToast = new bootstrap.Toast(document.getElementById('successToast'));
+            successToast.show();
           } else {
-            alert('Error: ' + result.error);
+            $('#errorToastMessage').text('Error: ' + result.error);
+            var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+            errorToast.show();
           }
         },
         error: function() {
-          alert('Failed to update work order issuance.');
+          $('#errorToastMessage').text('Failed to update work order issuance.');
+          var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+          errorToast.show();
         }
       });
     });

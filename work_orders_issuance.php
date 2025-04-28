@@ -63,6 +63,23 @@ try {
                   unset($_SESSION['success']);
               }
               ?>
+              <!-- Toast Container -->
+              <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                  <div class="toast-header bg-success text-white">
+                    <strong class="me-auto">Success</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+                  <div class="toast-body" id="successToastMessage"></div>
+                </div>
+                <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                  <div class="toast-header bg-danger text-white">
+                    <strong class="me-auto">Error</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+                  <div class="toast-body" id="errorToastMessage"></div>
+                </div>
+              </div>
               <table id="workOrderTable" class="table table-bordered table-striped">
                 <thead>
                   <tr>
@@ -84,7 +101,7 @@ try {
                           <select class="form-select form-select-sm contractor-select" data-work-order-id="<?php echo $order['id']; ?>" name="contractor_id" required>
                             <option value="" disabled selected>Select Contractor</option>
                             <?php foreach ($contractors as $contractor): ?>
-                              <option value="<?php echo $contractor['id']; ?>">
+                              <option value="<?php echo $contractor['id']; ?>" data-contractor-name="<?php echo htmlspecialchars($contractor['name']); ?>">
                                 <?php echo htmlspecialchars($contractor['name']); ?>
                               </option>
                             <?php endforeach; ?>
@@ -113,6 +130,7 @@ try {
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <?php include 'includes/footer-src-files.php'; ?>
+
 </body>
 
 </html>

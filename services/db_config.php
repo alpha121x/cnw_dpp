@@ -12,7 +12,7 @@ $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";
 try {
     // Create a PDO instance
     $pdo = new PDO($dsn, $user, $password);
-    echo "Connected to the database successfully!";
+    // echo "Connected to the database successfully!";
     
     // Set the PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

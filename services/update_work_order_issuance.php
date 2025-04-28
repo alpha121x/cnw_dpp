@@ -17,7 +17,6 @@ if (!isset($_POST['work_order_id']) || !isset($_POST['contractor_id'])) {
 
 $work_order_id = trim($_POST['work_order_id']);
 $contractor_id = trim($_POST['contractor_id']);
-$date_of_issuance = date('Y-m-d'); // Current date
 
 try {
     // Check if work order exists
@@ -36,20 +35,9 @@ try {
         exit();
     }
 
-    // Check if issuance record exists
-    $stmt = $pdo->prepare("SELECT id FROM public.tbl_work_order_issuance WHERE work_order_id = ?");
-    $stmt->execute([$work_order_id]);
-    $existing = $stmt->fetch();
-
-    if ($existing) {
-        // Update existing issuance
-        $stmt = $pdo->prepare("UPDATE public.tbl_work_order_issuance SET contractor_id = ?, date_of_issuance = ? WHERE work_order_id = ?");
-        $stmt->execute([$contractor_id, $date_of_issuance, $work_order_id]);
-    } else {
-        // Insert new issuance
-        $stmt = $pdo->prepare("INSERT INTO public.tbl_work_order_issuance (work_order_id, contractor_id, date_of_issuance) VALUES (?, ?, ?)");
-        $stmt->execute([$work_order_id, $contractor_id, $date_of_issuance]);
-    }
+    // Update contractor_id in tbl_work_orders
+    $stmt = $pdo->prepare("UPDATE public.tbl_work_orders SET contractor_id = ? WHERE id = ?");
+    $stmt->execute([$contractor_id, $work_order_id]);
 
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
