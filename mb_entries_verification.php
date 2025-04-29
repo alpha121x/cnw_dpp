@@ -193,14 +193,6 @@ $mb_entries = $dummy_data;
   <!-- Initialize DataTables and Debug Modal -->
   <script>
     $(document).ready(function() {
-        // Debug: Check if jQuery and DataTables are loaded
-        console.log('jQuery version:', $.fn.jquery);
-        if (typeof $.fn.DataTable === 'undefined') {
-            console.error('DataTables is not loaded.');
-        } else {
-            console.log('DataTables is loaded.');
-        }
-
         // Initialize DataTables
         try {
             $('#mbEntriesTable').DataTable({
@@ -220,6 +212,14 @@ $mb_entries = $dummy_data;
         // Debug: Check if modal button click is registering
         $('.view-details-btn').on('click', function() {
             console.log('View Details button clicked for modal:', $(this).data('bs-target'));
+            // Manually trigger the modal to test Bootstrap functionality
+            try {
+                var modalId = $(this).data('bs-target');
+                $(modalId).modal('show');
+                console.log('Manually triggered modal:', modalId);
+            } catch (e) {
+                console.error('Error manually triggering modal:', e);
+            }
         });
     });
   </script>
