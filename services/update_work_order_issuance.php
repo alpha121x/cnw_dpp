@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'services/db_config.php';
+require_once 'db_config.php';
 
 // Check if user is authenticated
 if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {

@@ -57,16 +57,6 @@ try {
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Work Order Issuance</h5>
-              <?php
-              if (isset($_SESSION['error'])) {
-                echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
-                unset($_SESSION['error']);
-              }
-              if (isset($_SESSION['success'])) {
-                echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
-                unset($_SESSION['success']);
-              }
-              ?>
               <!-- Toast Container -->
               <div class="toast-container position-fixed bottom-0 end-0 p-3">
                 <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">

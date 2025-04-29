@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'db_config.php'; // From artifact 026eed84-6bfd-4910-9bac-46c7d61d830f
+require_once '../auth.php';
+require_once 'db_config.php'; // Database configuration
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cost = $_POST['cost'];
@@ -21,11 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $_SESSION['success'] = "Work order created successfully.";
-        header("Location: ../work_order_issuance.php");
-        exit();
+        header("Location: ../work_orders_issuance.php");
+        exit();        
     } catch (PDOException $e) {
         $_SESSION['error'] = "Error creating work order: " . $e->getMessage();
-        header("Location: ../create-work-order.php");
+        header("Location: ../create_work_orders.php");
         exit();
     }
 }
