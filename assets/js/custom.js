@@ -35,61 +35,48 @@ $(document).ready(function() {
     });
   });
 
-  $(document).ready(function() {
-    // Initialize DataTable
-    $('#workOrderTable').DataTable({
-      "responsive": true,
-      "paging": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "columnDefs": [
-        { "orderable": false, "targets": [3, 4] } // Disable sorting on Contractor and Action columns
-      ]
+  document.addEventListener('DOMContentLoaded', function() {
+    const selects = document.querySelectorAll('.contractor-select');
+    selects.forEach(select => {
+        select.addEventListener('change', function() {
+            const workOrderId = this.getAttribute('data-work-order-id');
+            const contractorId = this.value;
+            const contractorName = this.options[this.selectedIndex].getAttribute('data-contractor-name');
+
+            // Send AJAX request to assign contractor
+            fetch('services/update_work_order_issuance.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `work_order_id=${workOrderId}&contractor_id=${contractorId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI: Replace dropdown with contractor name and show Issued badge
+                    const td = select.parentElement;
+                    td.textContent = contractorName;
+                    const actionTd = td.nextElementSibling;
+                    actionTd.innerHTML = '<span class="badge bg-success">Issued</span>';
+
+                    // Show success toast
+                    const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+                    document.getElementById('successToastMessage').textContent = 'Contractor assigned successfully!';
+                    successToast.show();
+                } else {
+                    // Show error toast
+                    const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                    document.getElementById('errorToastMessage').textContent = data.message || 'Failed to assign contractor.';
+                    errorToast.show();
+                }
+            })
+            .catch(error => {
+                // Show error toast
+                const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                document.getElementById('errorToastMessage').textContent = 'Error: ' + error.message;
+                errorToast.show();
+            });
+        });
     });
-
-    // Handle contractor dropdown change with confirmation
-    $('#workOrderTable').on('change', '.contractor-select', function() {
-      var workOrderId = $(this).data('work-order-id');
-      var contractorId = $(this).val();
-      var contractorName = $(this).find('option:selected').data('contractor-name');
-
-      if (!contractorId) {
-        alert('Please select a valid contractor.');
-        return;
-      }
-
-      // Show confirmation dialog
-      if (!confirm('Are you sure you want to issue work order WO-' + ('000' + workOrderId).slice(-3) + ' to ' + contractorName + '?')) {
-        $(this).val(''); // Reset dropdown if user cancels
-        return;
-      }
-
-      // AJAX request to update issuance
-      $.ajax({
-        url: 'services/update_work_order_issuance.php',
-        type: 'POST',
-        data: {
-          work_order_id: workOrderId,
-          contractor_id: contractorId
-        },
-        success: function(response) {
-          var result = JSON.parse(response);
-          if (result.success) {
-            $('#successToastMessage').text('Work order WO-' + ('000' + workOrderId).slice(-3) + ' assigned to ' + contractorName + ' successfully.');
-            var successToast = new bootstrap.Toast(document.getElementById('successToast'));
-            successToast.show();
-          } else {
-            $('#errorToastMessage').text('Error: ' + result.error);
-            var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-            errorToast.show();
-          }
-        },
-        error: function() {
-          $('#errorToastMessage').text('Failed to update work order issuance.');
-          var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-          errorToast.show();
-        }
-      });
-    });
-  });
+});

@@ -1,27 +1,31 @@
 <?php
-session_start();
-require_once 'services/db_config.php'; // From artifact 026eed84-6bfd-4910-9bac-46c7d61d830f
+require_once 'auth.php';
+require_once 'services/db_config.php'; // Database configuration
 
 // Redirect to login if not authenticated
 if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
-    header("Location: login.php");
-    exit();
+  header("Location: login.php");
+  exit();
 }
 
-// Fetch work orders
+// Fetch work orders with contractor details
 try {
-    $stmt = $pdo->query("SELECT id, cost, date_of_commencement, time_limit FROM public.tbl_work_orders");
-    $work_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $stmt = $pdo->query("
+        SELECT wo.id, wo.cost, wo.date_of_commencement, wo.time_limit, wo.contractor_id, c.name AS contractor_name
+        FROM public.tbl_work_orders wo
+        LEFT JOIN public.tbl_contractors c ON wo.contractor_id = c.id
+    ");
+  $work_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Error fetching work orders: " . $e->getMessage();
+  $_SESSION['error'] = "Error fetching work orders: " . $e->getMessage();
 }
 
 // Fetch contractors for dropdown
 try {
-    $stmt = $pdo->query("SELECT id, name FROM public.tbl_contractors");
-    $contractors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  $stmt = $pdo->query("SELECT id, name FROM public.tbl_contractors");
+  $contractors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $_SESSION['error'] = "Error fetching contractors: " . $e->getMessage();
+  $_SESSION['error'] = "Error fetching contractors: " . $e->getMessage();
 }
 ?>
 
@@ -32,9 +36,9 @@ try {
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>C&W- DPP</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <title>C&W - DPP</title>
+  <meta content="Work Order Issuance for Digitization of Payment System" name="description">
+  <meta content="work order, issuance, contractor, payment system" name="keywords">
 
   <?php include 'includes/header-files.php'; ?>
 </head>
@@ -52,15 +56,15 @@ try {
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Work Orders Issuance</h5>
+              <h5 class="card-title">Work Order Issuance</h5>
               <?php
               if (isset($_SESSION['error'])) {
-                  echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
-                  unset($_SESSION['error']);
+                echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
+                unset($_SESSION['error']);
               }
               if (isset($_SESSION['success'])) {
-                  echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
-                  unset($_SESSION['success']);
+                echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
+                unset($_SESSION['success']);
               }
               ?>
               <!-- Toast Container -->
@@ -98,22 +102,32 @@ try {
                         <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
                         <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
                         <td>
-                          <select class="form-select form-select-sm contractor-select" data-work-order-id="<?php echo $order['id']; ?>" name="contractor_id" required>
-                            <option value="" disabled selected>Select Contractor</option>
-                            <?php foreach ($contractors as $contractor): ?>
-                              <option value="<?php echo $contractor['id']; ?>" data-contractor-name="<?php echo htmlspecialchars($contractor['name']); ?>">
-                                <?php echo htmlspecialchars($contractor['name']); ?>
-                              </option>
-                            <?php endforeach; ?>
-                          </select>
+                          <?php if ($order['contractor_id']): ?>
+                            <?php echo htmlspecialchars($order['contractor_name']); ?>
+                          <?php else: ?>
+                            <select class="form-select form-select-sm contractor-select" data-work-order-id="<?php echo $order['id']; ?>" name="contractor_id" required>
+                              <option value="" disabled selected>Select Contractor</option>
+                              <?php foreach ($contractors as $contractor): ?>
+                                <option value="<?php echo $contractor['id']; ?>" data-contractor-name="<?php echo htmlspecialchars($contractor['name']); ?>">
+                                  <?php echo htmlspecialchars($contractor['name']); ?>
+                                </option>
+                              <?php endforeach; ?>
+                            </select>
+                          <?php endif; ?>
                         </td>
                         <td>
-                          <a href="assets/pdfs/files.pdf" target="_blank" class="btn btn-secondary btn-sm view-pdf-btn">View PDF</a>
+                          <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+                          <?php if ($order['contractor_id']): ?>
+                            <span class="badge bg-success ms-2">Issued</span>
+                          <?php endif; ?>
                         </td>
+
                       </tr>
                     <?php endforeach; ?>
                   <?php else: ?>
-                    <tr><td colspan="5">No work orders found.</td></tr>
+                    <tr>
+                      <td colspan="5">No work orders found.</td>
+                    </tr>
                   <?php endif; ?>
                 </tbody>
               </table>
@@ -130,7 +144,6 @@ try {
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <?php include 'includes/footer-src-files.php'; ?>
-
 </body>
 
 </html>
