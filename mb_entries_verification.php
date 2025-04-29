@@ -137,7 +137,7 @@ $mb_entries = $dummy_data;
                         <td><?php echo htmlspecialchars($entry['date_of_measurement']); ?></td>
                         <td><?php echo htmlspecialchars($entry['measurement_total']) . ' ' . htmlspecialchars($units[$entry['unit_id']]); ?></td>
                         <td>
-                          <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailsModal<?php echo $entry['id']; ?>">
+                          <button type="button" class="btn btn-info btn-sm view-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal<?php echo $entry['id']; ?>">
                             View Details
                           </button>
                         </td>
@@ -190,9 +190,38 @@ $mb_entries = $dummy_data;
 
   <?php include 'includes/footer-src-files.php'; ?>
 
-  <!-- Initialize DataTables -->
+  <!-- Initialize DataTables and Debug Modal -->
   <script>
-   
+    $(document).ready(function() {
+        // Debug: Check if jQuery and DataTables are loaded
+        console.log('jQuery version:', $.fn.jquery);
+        if (typeof $.fn.DataTable === 'undefined') {
+            console.error('DataTables is not loaded.');
+        } else {
+            console.log('DataTables is loaded.');
+        }
+
+        // Initialize DataTables
+        try {
+            $('#mbEntriesTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [[0, 'asc']], // Sort by ID ascending by default
+                language: {
+                    search: "Filter entries:",
+                    lengthMenu: "Show _MENU_ entries"
+                }
+            });
+            console.log('DataTables initialized successfully.');
+        } catch (e) {
+            console.error('Error initializing DataTables:', e);
+        }
+
+        // Debug: Check if modal button click is registering
+        $('.view-details-btn').on('click', function() {
+            console.log('View Details button clicked for modal:', $(this).data('bs-target'));
+        });
+    });
   </script>
 
 </body>
