@@ -16,9 +16,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] && isset($_SESSION['us
 }
 
 // Set default profile picture if none exists
-$profile_picture = isset($_SESSION['user']['picture']) && !empty($_SESSION['user']['picture']) 
-    ? htmlspecialchars($_SESSION['user']['picture']) 
-    : 'assets/img/profile-img.jpg';
+$profile_picture = 'assets/img/noImg.png';
 
 // Set full name
 $full_name = isset($_SESSION['user']['first_name']) && isset($_SESSION['user']['last_name']) 
