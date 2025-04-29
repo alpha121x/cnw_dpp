@@ -192,17 +192,7 @@ $mb_entries = $dummy_data;
 
   <!-- Initialize DataTables -->
   <script>
-    $(document).ready(function() {
-        $('#mbEntriesTable').DataTable({
-            responsive: true,
-            pageLength: 10,
-            order: [[0, 'asc']], // Sort by ID ascending by default
-            language: {
-                search: "Filter entries:",
-                lengthMenu: "Show _MENU_ entries"
-            }
-        });
-    });
+   
   </script>
 
 </body>
