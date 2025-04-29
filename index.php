@@ -25,7 +25,7 @@ require_once 'auth.php';
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>C&W - Digitized Pyament System</h1>
+      <h1>C&W - Digitized Payment System</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
