@@ -1,6 +1,7 @@
 <?php 
 require_once 'auth.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +11,7 @@ require_once 'auth.php';
 
   <title>C&W - DPP</title>
   <meta content="Dashboard for Digitization of Payment System" name="description">
-  <meta content="payment system, digitization, system monitoring, analytics" name="keywords">
+  <meta content="payment system, digitization, work order, mb entries, interim payment" name="keywords">
 
   <?php include 'includes/header-files.php'; ?>
 </head>
@@ -24,10 +25,10 @@ require_once 'auth.php';
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Payment System Dashboard</h1>
+      <h1>C&W - Digitized Pyament System</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
           <li class="breadcrumb-item active">Dashboard</li>
         </ol>
       </nav>
@@ -36,105 +37,73 @@ require_once 'auth.php';
     <section class="section dashboard">
       <div class="row">
 
-        <!-- System Uptime Card -->
-        <div class="col-lg-4 col-md-6">
-          <div class="card info-card">
+        <!-- Work Order Creation Card -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card info-card bg-primary text-white">
             <div class="card-body">
-              <h5 class="card-title">System Uptime</h5>
+              <h5 class="card-title">Work Order Creation</h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-clock"></i>
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-primary">
+                  <i class="bi bi-file-earmark-plus"></i>
                 </div>
                 <div class="ps-3">
-                  <h6>99.98%</h6>
-                  <span class="text-success small pt-1 fw-bold">Stable</span>
-                  <span class="text-muted small pt-2 ps-1">Last checked: <?php echo date('Y-m-d H:i:s'); ?></span>
+                  <p>Create and manage work orders for projects.</p>
                 </div>
               </div>
             </div>
           </div>
-        </div><!-- End System Uptime Card -->
+        </div><!-- End Work Order Creation Card -->
 
-        <!-- API Response Time Card -->
-        <div class="col-lg-4 col-md-6">
-          <div class="card info-card">
+        <!-- Work Order Issuance Card -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card info-card bg-success text-white">
             <div class="card-body">
-              <h5 class="card-title">API Response Time</h5>
+              <h5 class="card-title">Work Order Issuance</h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-speedometer2"></i>
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-success">
+                  <i class="bi bi-file-check"></i>
                 </div>
                 <div class="ps-3">
-                  <h6>250 ms</h6>
-                  <span class="text-success small pt-1 fw-bold">Optimal</span>
-                  <span class="text-muted small pt-2 ps-1">Average this hour</span>
+                  <p>Issue work orders to contractors and teams.</p>
                 </div>
               </div>
             </div>
           </div>
-        </div><!-- End API Response Time Card -->
+        </div><!-- End Work Order Issuance Card -->
 
-        <!-- Active Users Card -->
-        <div class="col-lg-4 col-md-6">
-          <div class="card info-card">
+        <!-- MB Entries Verification Card -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card info-card bg-warning text-white">
             <div class="card-body">
-              <h5 class="card-title">Active Users</h5>
+              <h5 class="card-title">MB Entries Verification</h5>
               <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                  <i class="bi bi-people"></i>
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-warning">
+                  <i class="bi bi-clipboard-check"></i>
                 </div>
                 <div class="ps-3">
-                  <h6>342</h6>
-                  <span class="text-success small pt-1 fw-bold">+5%</span>
-                  <span class="text-muted small pt-2 ps-1">Currently online</span>
+                  <p>Verify measurement book entries for accuracy.</p>
                 </div>
               </div>
             </div>
           </div>
-        </div><!-- End Active Users Card -->
+        </div><!-- End MB Entries Verification Card -->
 
-        <!-- System Alerts Table -->
-        <div class="col-12">
-          <div class="card system-alerts">
+        <!-- Interim Payment Bill Submission Card -->
+        <div class="col-lg-3 col-md-6">
+          <div class="card info-card bg-info text-white">
             <div class="card-body">
-              <h5 class="card-title">System Alerts</h5>
-              <table class="table table-borderless datatable">
-                <thead>
-                  <tr>
-                    <th scope="col">Alert ID</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Message</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>#ALRT001</td>
-                    <td><?php echo date('Y-m-d'); ?></td>
-                    <td>Security</td>
-                    <td>Potential unauthorized access detected</td>
-                    <td><span class="badge bg-warning">Under Review</span></td>
-                  </tr>
-                  <tr>
-                    <td>#ALRT002</td>
-                    <td><?php echo date('Y-m-d'); ?></td>
-                    <td>Performance</td>
-                    <td>High API latency detected</td>
-                    <td><span class="badge bg-success">Resolved</span></td>
-                  </tr>
-                  <tr>
-                    <td>#ALRT003</td>
-                    <td><?php echo date('Y-m-d'); ?></td>
-                    <td>Maintenance</td>
-                    <td>Scheduled downtime at 02:00 AM</td>
-                    <td><span class="badge bg-info">Scheduled</span></td>
-                  </tr>
-                </tbody>
-              </table>
+              <h5 class="card-title">Payment Bill Submission</h5>
+              <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-info">
+                  <i class="bi bi-receipt"></i>
+                </div>
+                <div class="ps-3">
+                  <p>Contractors submit interim payment bills for review.</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div><!-- End System Alerts Table -->
+        </div><!-- End Interim Payment Bill Submission Card -->
 
       </div>
     </section>
