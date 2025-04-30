@@ -50,28 +50,27 @@
                 <div id="items-container">
                   <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
                     <div class="col-12 col-md-2">
-                      <label class="form-label">Item No. <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="items[0][number]" placeholder="Item No." required>
+                      <label class="form-label">Item Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="items[0][name]" placeholder="Enter item name" required>
                     </div>
                     <div class="col-12 col-md-3">
-                      <label class="form-label">Description <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="items[0][description]" placeholder="Description" required>
+                      <label class="form-label">Description</label>
+                      <input type="text" class="form-control" name="items[0][description]" placeholder="Enter description">
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" name="items[0][quantity]" placeholder="Quantity" min="1" required>
+                      <input type="number" class="form-control" name="items[0][quantity]" placeholder="Qty" min="1" required>
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Unit <span class="text-danger">*</span></label>
                       <input type="text" class="form-control" name="items[0][unit]" placeholder="Unit" required>
                     </div>
                     <div class="col-12 col-md-2">
-                      <label class="form-label">Rate Quoted <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" name="items[0][rate]" placeholder="Rate" step="0.01" required>
+                      <label class="form-label">Rate <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" name="items[0][rate]" step="0.01" placeholder="Rate" required>
                     </div>
-                    <div class="col-12 col-md-1 d-flex">
-                      <button type="button" class="btn btn-secondary btn-sm me-1 add-item-btn">+</button>
-                      <button type="button" class="btn btn-danger btn-sm remove-item-btn">X</button>
+                    <div class="col-12 col-md-1 d-grid">
+                      <button type="button" class="btn btn-secondary btn-sm add-item-btn">+</button>
                     </div>
                   </div>
                 </div>
@@ -82,6 +81,7 @@
                   </div>
                 </div>
               </form>
+
 
             </div>
           </div>
