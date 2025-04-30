@@ -1,32 +1,37 @@
-$(document).ready(function() {
+  $(document).ready(function () {
     let itemIndex = 1;
 
-    // Add new item row
-    $('#add-item-btn').on('click', function() {
-      const newItemRow = `
+    // Add item dynamically
+    $('#items-container').on('click', '.add-item-btn', function () {
+      const newItem = `
         <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
-          <div class="col-12 col-md-4">
-            <label for="item_name_${itemIndex}" class="form-label">Item Name <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="items[${itemIndex}][name]" id="item_name_${itemIndex}" placeholder="Enter item name" required>
+          <div class="col-12 col-md-2">
+            <input type="text" class="form-control" name="items[${itemIndex}][number]" placeholder="Item No." required>
           </div>
           <div class="col-12 col-md-3">
-            <label for="item_quantity_${itemIndex}" class="form-label">Quantity <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="items[${itemIndex}][quantity]" id="item_quantity_${itemIndex}" placeholder="Enter quantity" min="1" required>
-          </div>
-          <div class="col-12 col-md-3">
-            <label for="item_rate_${itemIndex}" class="form-label">Rate Quoted <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="items[${itemIndex}][rate]" id="item_rate_${itemIndex}" placeholder="Enter rate" step="0.01" required>
+            <input type="text" class="form-control" name="items[${itemIndex}][description]" placeholder="Description" required>
           </div>
           <div class="col-12 col-md-2">
-            <button type="button" class="btn btn-danger btn-sm remove-item-btn">Remove</button>
+            <input type="number" class="form-control" name="items[${itemIndex}][quantity]" placeholder="Quantity" min="1" required>
           </div>
-        </div>`;
-      $('#items-container').append(newItemRow);
+          <div class="col-12 col-md-2">
+            <input type="text" class="form-control" name="items[${itemIndex}][unit]" placeholder="Unit" required>
+          </div>
+          <div class="col-12 col-md-2">
+            <input type="number" class="form-control" name="items[${itemIndex}][rate]" placeholder="Rate" step="0.01" required>
+          </div>
+          <div class="col-12 col-md-1 d-flex">
+            <button type="button" class="btn btn-secondary btn-sm me-1 add-item-btn">+</button>
+            <button type="button" class="btn btn-danger btn-sm remove-item-btn">X</button>
+          </div>
+        </div>
+      `;
+      $('#items-container').append(newItem);
       itemIndex++;
     });
 
-    // Remove item row
-    $('#items-container').on('click', '.remove-item-btn', function() {
+    // Remove item
+    $('#items-container').on('click', '.remove-item-btn', function () {
       if ($('.item-row').length > 1) {
         $(this).closest('.item-row').remove();
       } else {

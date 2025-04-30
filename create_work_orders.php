@@ -29,6 +29,10 @@
               <form action="services/work_order_creation.php" method="POST" class="row g-3 g-md-4">
                 <div class="row gy-3 gy-md-4">
                   <div class="col-12 col-md-6">
+                    <label for="cont_name" class="form-label">Contractor Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="cont_name" id="cont_name" placeholder="Enter Contractor Name" required>
+                  </div>
+                  <div class="col-12 col-md-6">
                     <label for="cost" class="form-label">Total Cost <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" name="cost" id="cost" placeholder="Enter total cost" step="0.01" required>
                   </div>
@@ -41,37 +45,44 @@
                     <input type="number" class="form-control" name="time_limit" id="time_limit" placeholder="Enter time limit in days" required>
                   </div>
                 </div>
-                
+
                 <h6 class="mt-4">Items</h6>
                 <div id="items-container">
                   <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
-                    <div class="col-12 col-md-4">
-                      <label for="item_name_0" class="form-label">Item Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="items[0][name]" id="item_name_0" placeholder="Enter item name" required>
+                    <div class="col-12 col-md-2">
+                      <label class="form-label">Item No. <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="items[0][number]" placeholder="Item No." required>
                     </div>
                     <div class="col-12 col-md-3">
-                      <label for="item_quantity_0" class="form-label">Quantity <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" name="items[0][quantity]" id="item_quantity_0" placeholder="Enter quantity" min="1" required>
-                    </div>
-                    <div class="col-12 col-md-3">
-                      <label for="item_rate_0" class="form-label">Rate Quoted <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" name="items[0][rate]" id="item_rate_0" placeholder="Enter rate" step="0.01" required>
+                      <label class="form-label">Description <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="items[0][description]" placeholder="Description" required>
                     </div>
                     <div class="col-12 col-md-2">
-                      <button type="button" class="btn btn-danger btn-sm remove-item-btn">Remove</button>
+                      <label class="form-label">Quantity <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" name="items[0][quantity]" placeholder="Quantity" min="1" required>
+                    </div>
+                    <div class="col-12 col-md-2">
+                      <label class="form-label">Unit <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" name="items[0][unit]" placeholder="Unit" required>
+                    </div>
+                    <div class="col-12 col-md-2">
+                      <label class="form-label">Rate Quoted <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" name="items[0][rate]" placeholder="Rate" step="0.01" required>
+                    </div>
+                    <div class="col-12 col-md-1 d-flex">
+                      <button type="button" class="btn btn-secondary btn-sm me-1 add-item-btn">+</button>
+                      <button type="button" class="btn btn-danger btn-sm remove-item-btn">X</button>
                     </div>
                   </div>
                 </div>
-                <div class="col-12">
-                  <button type="button" class="btn btn-secondary btn-sm" id="add-item-btn">Add Another Item</button>
-                </div>
-                
+
                 <div class="col-12">
                   <div class="d-grid">
                     <button class="btn btn-primary" type="submit">Create Work Order</button>
                   </div>
                 </div>
               </form>
+
             </div>
           </div>
         </div>
