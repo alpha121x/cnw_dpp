@@ -13,22 +13,22 @@
     <!-- Direct Links without Components Dropdown -->
     <li class="nav-item">
       <a class="nav-link" href="create_work_orders.php">
-        <i class="bi bi-menu-button-wide"></i><span>Create Work Orders</span>
+        <i class="bi bi-boxes"></i><span>Create Work Orders</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="work_orders_issuance.php">
-        <i class="bi bi-menu-button-wide"></i><span>Work Orders Issuance</span>
+        <i class="bi bi-boxes"></i><span>Work Orders Issuance</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="mb_entries_verification.php">
-        <i class="bi bi-menu-button-wide"></i><span>MB Entries Verification</span>
+        <i class="bi bi-boxes"></i><span>MB Entries Verification</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="interim_payment_bills.php">
-        <i class="bi bi-menu-button-wide"></i><span>Interim Payment Bills</span>
+        <i class="bi bi-boxes"></i><span>Interim Payment Bills</span>
       </a>
     </li>
 
