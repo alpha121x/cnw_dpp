@@ -29,6 +29,15 @@ try {
 }
 ?>
 
+<?php
+$creationSuccess = '';
+if (isset($_SESSION['success'])) {
+    $creationSuccess = $_SESSION['success'];
+    unset($_SESSION['success']); // prevent repeat on refresh
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -137,3 +146,16 @@ try {
 </body>
 
 </html>
+
+<?php if (!empty($creationSuccess)): ?>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toastEl = document.getElementById("successToast");
+    const toastBody = document.getElementById("successToastMessage");
+
+    toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  });
+</script>
+<?php endif; ?>
