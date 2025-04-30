@@ -32,8 +32,8 @@ try {
 <?php
 $creationSuccess = '';
 if (isset($_SESSION['success'])) {
-    $creationSuccess = $_SESSION['success'];
-    unset($_SESSION['success']); // prevent repeat on refresh
+  $creationSuccess = $_SESSION['success'];
+  unset($_SESSION['success']); // prevent repeat on refresh
 }
 ?>
 
@@ -90,6 +90,7 @@ if (isset($_SESSION['success'])) {
                     <th>Work Order</th>
                     <th>Date of Commenecement</th>
                     <th>Name of Contractor</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -115,12 +116,16 @@ if (isset($_SESSION['success'])) {
                           <?php endif; ?>
                         </td>
                         <td>
-                          <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
                           <?php if ($order['contractor_id']): ?>
                             <span class="badge bg-success ms-2">Issued</span>
+                          <?php else: ?>
+                            <span class="badge bg-warning text-dark ms-2">Not Issued</span>
                           <?php endif; ?>
                         </td>
 
+                        <td>
+                          <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+                        </td>
                       </tr>
                     <?php endforeach; ?>
                   <?php else: ?>
@@ -148,14 +153,14 @@ if (isset($_SESSION['success'])) {
 </html>
 
 <?php if (!empty($creationSuccess)): ?>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const toastEl = document.getElementById("successToast");
-    const toastBody = document.getElementById("successToastMessage");
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const toastEl = document.getElementById("successToast");
+      const toastBody = document.getElementById("successToastMessage");
 
-    toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
-  });
-</script>
+      toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    });
+  </script>
 <?php endif; ?>
