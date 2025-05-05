@@ -19,7 +19,6 @@ $dummy_data = [
     'date_of_comm' => '2025-01-15',
     'date_of_comp' => '2025-04-10',
     'date_of_measurement' => '2025-03-20',
-    'db_date_time' => '2025-03-20 14:30:00',
     'measurement_values' => [
       ['description' => 'Earthwork Excavation', 'quantity' => 120.5, 'unit' => 'm³', 'remarks' => 'Completed'],
       ['description' => 'PCC 1:4:8', 'quantity' => 75, 'unit' => 'm²', 'remarks' => 'In progress'],
@@ -33,7 +32,6 @@ $dummy_data = [
     'date_of_comm' => '2025-02-01',
     'date_of_comp' => null,
     'date_of_measurement' => '2025-03-25',
-    'db_date_time' => '2025-03-25 09:15:00',
     'measurement_values' => [
       ['description' => 'Steel Plates Replacement', 'quantity' => 2000, 'unit' => 'kg', 'remarks' => 'Installed']
     ]
@@ -45,7 +43,6 @@ $dummy_data = [
     'date_of_comm' => '2025-03-01',
     'date_of_comp' => '2025-04-15',
     'date_of_measurement' => '2025-04-01',
-    'db_date_time' => '2025-04-01 16:45:00',
     'measurement_values' => [
       ['description' => 'PVC Pipe Sections', 'quantity' => 50, 'unit' => 'units', 'remarks' => 'Delivered']
     ]
@@ -95,7 +92,6 @@ $html = "
   <tr><td><strong>Date of Commencement:</strong></td><td>{$data['date_of_comm']}</td></tr>
   <tr><td><strong>Date of Completion:</strong></td><td>" . ($data['date_of_comp'] ?? 'Not Completed') . "</td></tr>
   <tr><td><strong>Date of Measurement:</strong></td><td>{$data['date_of_measurement']}</td></tr>
-  <tr><td><strong>Database Entry Time:</strong></td><td>{$data['db_date_time']}</td></tr>
 </table>
 
 <h3>Measurement Details</h3>
