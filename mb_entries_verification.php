@@ -137,7 +137,7 @@ $mb_entries = $dummy_data;
                         <td><?php echo htmlspecialchars($entry['date_of_measurement']); ?></td>
                         <td><?php echo htmlspecialchars($entry['measurement_total']) . ' ' . htmlspecialchars($units[$entry['unit_id']]); ?></td>
                         <td>
-                          <button type="button" class="badge bg-success view-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal<?php echo $entry['id']; ?>">
+                          <button type="button" class="badge bg-success border-0 view-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal<?php echo $entry['id']; ?>">
                             View Details
                           </button>
                         </td>
