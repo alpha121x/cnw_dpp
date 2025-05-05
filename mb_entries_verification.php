@@ -145,11 +145,9 @@ $mb_entries = $dummy_data;
                           <a href="#view" class="text-decoration-none">
                             <span class="badge bg-success me-1">View</span>
                           </a>
-                          <a href="#download" class="text-decoration-none">
+                          <a href="services/generate_pdf.php?id=<?php echo $entry['id']; ?>" class="text-decoration-none" target="_blank">
                             <span class="badge bg-primary me-1">Download</span>
                           </a>
-
-                          <!-- Upload with styled file input -->
                           <label class="badge bg-warning mb-0" style="cursor: pointer;">
                             Upload
                             <input type="file" name="fileUpload" style="display: none;" onchange="handleFileUpload(this)">
@@ -204,46 +202,7 @@ $mb_entries = $dummy_data;
 
   <!-- Initialize DataTables and Debug Modal -->
   <script>
-    $(document).ready(function() {
-      // Initialize DataTables
-      try {
-        $('#mbEntriesTable').DataTable({
-          responsive: true,
-          pageLength: 10,
-          order: [
-            [0, 'asc']
-          ], // Sort by ID ascending by default
-          language: {
-            search: "Filter entries:",
-            lengthMenu: "Show _MENU_ entries"
-          }
-        });
-        console.log('DataTables initialized successfully.');
-      } catch (e) {
-        console.error('Error initializing DataTables:', e);
-      }
-
-      // Debug: Check if modal button click is registering
-      $('.view-details-btn').on('click', function() {
-        console.log('View Details button clicked for modal:', $(this).data('bs-target'));
-        // Manually trigger the modal to test Bootstrap functionality
-        try {
-          var modalId = $(this).data('bs-target');
-          $(modalId).modal('show');
-          console.log('Manually triggered modal:', modalId);
-        } catch (e) {
-          console.error('Error manually triggering modal:', e);
-        }
-      });
-    });
-
-    function handleFileUpload(input) {
-      const file = input.files[0];
-      if (file) {
-        alert(`Selected file: ${file.name}`);
-        // You can now send this file via AJAX or form submission
-      }
-    }
+  
   </script>
 
 </body>

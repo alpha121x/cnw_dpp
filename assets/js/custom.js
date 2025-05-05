@@ -94,3 +94,45 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+
+$(document).ready(function() {
+  // Initialize DataTables
+  try {
+    $('#mbEntriesTable').DataTable({
+      responsive: true,
+      pageLength: 10,
+      order: [
+        [0, 'asc']
+      ], // Sort by ID ascending by default
+      language: {
+        search: "Filter entries:",
+        lengthMenu: "Show _MENU_ entries"
+      }
+    });
+    console.log('DataTables initialized successfully.');
+  } catch (e) {
+    console.error('Error initializing DataTables:', e);
+  }
+
+  // Debug: Check if modal button click is registering
+  $('.view-details-btn').on('click', function() {
+    console.log('View Details button clicked for modal:', $(this).data('bs-target'));
+    // Manually trigger the modal to test Bootstrap functionality
+    try {
+      var modalId = $(this).data('bs-target');
+      $(modalId).modal('show');
+      console.log('Manually triggered modal:', modalId);
+    } catch (e) {
+      console.error('Error manually triggering modal:', e);
+    }
+  });
+});
+
+function handleFileUpload(input) {
+  const file = input.files[0];
+  if (file) {
+    alert(`Selected file: ${file.name}`);
+    // You can now send this file via AJAX or form submission
+  }
+}
