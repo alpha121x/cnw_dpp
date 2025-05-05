@@ -80,8 +80,8 @@ foreach ($data['measurement_values'] as $index => $item) {
 }
 
 // Resolve image paths properly
-$logoPath = realpath(__DIR__ . "/../assets/img/cnw_logo.png");
-$punjabPath = realpath(__DIR__ . "/../assets/img/punjab.png");
+$logoPath = realpath("../assets/img/cnw_logo.png");
+$punjabPath = realpath("../assets/img/punjab.png");
 
 // Check if paths exist
 if (!$logoPath || !file_exists($logoPath)) {
