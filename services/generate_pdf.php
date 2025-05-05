@@ -79,7 +79,21 @@ foreach ($data['measurement_values'] as $index => $item) {
     $totalQty += $item['quantity'];
 }
 
-// HTML for PDF
+// Resolve image paths properly
+$logoPath = realpath(__DIR__ . "/../assets/img/cnw_logo.png");
+$punjabPath = realpath(__DIR__ . "/../assets/img/punjab.png");
+
+// Check if paths exist
+if (!$logoPath || !file_exists($logoPath)) {
+    error_log("Logo image not found at: " . $logoPath);
+    $logoPath = ''; // Fallback or handle error
+}
+if (!$punjabPath || !file_exists($punjabPath)) {
+    error_log("Punjab image not found at: " . $punjabPath);
+    $punjabPath = ''; // Fallback or handle error
+}
+
+// Update HTML with resolved paths
 $html = "
 <style>
     body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
@@ -96,14 +110,14 @@ $html = "
 <table class='header-table'>
     <tr>
         <td style='text-align: left; width: 25%;'>
-            <img src='file://" . __DIR__ . "/assets/img/cnw_logo.png' class='logo' />
+            " . ($logoPath ? "<img src='$logoPath' class='logo' />" : '') . "
         </td>
         <td style='text-align: center; width: 50%;'>
             <h2><strong>C&W Digitized Payment System</strong></h2>
             <div><strong>Measurement Book Report</strong></div>
         </td>
         <td style='text-align: right; width: 25%;'>
-            <img src='file://" . __DIR__ . "/assets/img/punjab.png' class='logo' />
+            " . ($punjabPath ? "<img src='$punjabPath' class='logo' />" : '') . "
         </td>
     </tr>
 </table>
