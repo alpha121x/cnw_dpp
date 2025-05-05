@@ -75,15 +75,38 @@ foreach ($data['measurement_values'] as $item) {
 // HTML content with professional layout
 $html = "
 <style>
-    body { font-family: DejaVu Sans, sans-serif; }
-    h2 { text-align: center; margin-bottom: 20px; }
+    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+    h2 { text-align: center; margin: 10px 0; font-size: 18px; }
+    h3 { margin-top: 20px; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { border: 1px solid #000; padding: 8px; text-align: left; }
     .meta-table td { border: none; padding: 5px; }
-    .summary { margin-top: 20px; }
+    .header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .logo-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .logo {
+        height: 60px;
+    }
 </style>
 
-<h2>Measurement Book Entry</h2>
+<div class='logo-container'>
+    <img src='../assets/img/cnw_logo.png' class='logo' />
+    <div class='header'>
+        <h2>Government of Punjab</h2>
+        <div><strong>Public Infrastructure Department</strong></div>
+        <div><strong>Measurement Book Report</strong></div>
+    </div>
+    <img src='../assets/img/punjab.png' class='logo' />
+</div>
+
+<hr />
 
 <table class='meta-table'>
   <tr><td><strong>Name of Work:</strong></td><td>{$data['name']}</td></tr>
@@ -114,6 +137,7 @@ $html = "
   </tbody>
 </table>
 ";
+
 // Generate PDF
 $dompdf = new Dompdf();
 $dompdf->loadHtml($html);
