@@ -4,58 +4,58 @@ require_once 'services/db_config.php';
 
 // Redirect to login if not authenticated
 if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
-    header("Location: login.php");
-    exit();
+  header("Location: login.php");
+  exit();
 }
 
 // Dummy data to simulate database results
 $dummy_data = [
-    [
-        'id' => 1,
-        'name' => 'Road Construction MB-001',
-        'agency' => 'Public Works Dept',
-        'authority' => 'Eng. John Doe',
-        'date_of_comm' => '2025-01-15',
-        'date_of_comp' => '2025-04-10',
-        'date_of_measurement' => '2025-03-20',
-        'db_date_time' => '2025-03-20 14:30:00',
-        'measurement_values' => json_encode(['length' => 100, 'width' => 5]),
-        'unit_id' => 1, // m²
-        'measurement_total' => 500.00
-    ],
-    [
-        'id' => 2,
-        'name' => 'Bridge Repair MB-002',
-        'agency' => 'Infrastructure Agency',
-        'authority' => 'Eng. Jane Smith',
-        'date_of_comm' => '2025-02-01',
-        'date_of_comp' => null,
-        'date_of_measurement' => '2025-03-25',
-        'db_date_time' => '2025-03-25 09:15:00',
-        'measurement_values' => json_encode(['weight' => 2000]),
-        'unit_id' => 2, // kg
-        'measurement_total' => 2000.00
-    ],
-    [
-        'id' => 3,
-        'name' => 'Pipeline Installation MB-003',
-        'agency' => 'Water Board',
-        'authority' => 'Eng. Alex Brown',
-        'date_of_comm' => '2025-03-01',
-        'date_of_comp' => '2025-04-15',
-        'date_of_measurement' => '2025-04-01',
-        'db_date_time' => '2025-04-01 16:45:00',
-        'measurement_values' => json_encode(['count' => 50]),
-        'unit_id' => 3, // units
-        'measurement_total' => 50.00
-    ]
+  [
+    'id' => 1,
+    'name' => 'Road Construction MB-001',
+    'agency' => 'Public Works Dept',
+    'authority' => 'Eng. John Doe',
+    'date_of_comm' => '2025-01-15',
+    'date_of_comp' => '2025-04-10',
+    'date_of_measurement' => '2025-03-20',
+    'db_date_time' => '2025-03-20 14:30:00',
+    'measurement_values' => json_encode(['length' => 100, 'width' => 5]),
+    'unit_id' => 1, // m²
+    'measurement_total' => 500.00
+  ],
+  [
+    'id' => 2,
+    'name' => 'Bridge Repair MB-002',
+    'agency' => 'Infrastructure Agency',
+    'authority' => 'Eng. Jane Smith',
+    'date_of_comm' => '2025-02-01',
+    'date_of_comp' => null,
+    'date_of_measurement' => '2025-03-25',
+    'db_date_time' => '2025-03-25 09:15:00',
+    'measurement_values' => json_encode(['weight' => 2000]),
+    'unit_id' => 2, // kg
+    'measurement_total' => 2000.00
+  ],
+  [
+    'id' => 3,
+    'name' => 'Pipeline Installation MB-003',
+    'agency' => 'Water Board',
+    'authority' => 'Eng. Alex Brown',
+    'date_of_comm' => '2025-03-01',
+    'date_of_comp' => '2025-04-15',
+    'date_of_measurement' => '2025-04-01',
+    'db_date_time' => '2025-04-01 16:45:00',
+    'measurement_values' => json_encode(['count' => 50]),
+    'unit_id' => 3, // units
+    'measurement_total' => 50.00
+  ]
 ];
 
 // Map unit_id to unit names (simulating tbl_units)
 $units = [
-    1 => 'm²',
-    2 => 'kg',
-    3 => 'units'
+  1 => 'm²',
+  2 => 'kg',
+  3 => 'units'
 ];
 
 // In a real scenario, fetch from database:
@@ -107,12 +107,12 @@ $mb_entries = $dummy_data;
               <h5 class="card-title">Measurement Book Entries Verification</h5>
               <?php
               if (isset($_SESSION['error'])) {
-                  echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
-                  unset($_SESSION['error']);
+                echo '<div class="alert alert-danger">' . htmlspecialchars($_SESSION['error']) . '</div>';
+                unset($_SESSION['error']);
               }
               if (isset($_SESSION['success'])) {
-                  echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
-                  unset($_SESSION['success']);
+                echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['success']) . '</div>';
+                unset($_SESSION['success']);
               }
               ?>
               <table id="mbEntriesTable" class="table table-bordered table-striped">
@@ -137,15 +137,25 @@ $mb_entries = $dummy_data;
                         <td><?php echo htmlspecialchars($entry['date_of_measurement']); ?></td>
                         <td><?php echo htmlspecialchars($entry['measurement_total']) . ' ' . htmlspecialchars($units[$entry['unit_id']]); ?></td>
                         <td>
-                          <button type="button" class="btn btn-info btn-sm view-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal<?php echo $entry['id']; ?>">
+                          <button type="button" class="badge bg-success view-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal<?php echo $entry['id']; ?>">
                             View Details
                           </button>
                         </td>
                         <td>
-                          <a href="#view" class="text-decoration-none"><span class="badge bg-success me-1">View</span></a>
-                          <a href="#download" class="text-decoration-none"><span class="badge bg-primary me-1">Download</span></a>
-                          <a href="#upload" class="text-decoration-none"><span class="badge bg-warning">Upload</span></a>
+                          <a href="#view" class="text-decoration-none">
+                            <span class="badge bg-success me-1">View</span>
+                          </a>
+                          <a href="#download" class="text-decoration-none">
+                            <span class="badge bg-primary me-1">Download</span>
+                          </a>
+
+                          <!-- Upload with styled file input -->
+                          <label class="badge bg-warning mb-0" style="cursor: pointer;">
+                            Upload
+                            <input type="file" name="fileUpload" style="display: none;" onchange="handleFileUpload(this)">
+                          </label>
                         </td>
+
                       </tr>
 
                       <!-- Details Modal -->
@@ -172,7 +182,9 @@ $mb_entries = $dummy_data;
                       </div>
                     <?php endforeach; ?>
                   <?php else: ?>
-                    <tr><td colspan="7">No measurement book entries found.</td></tr>
+                    <tr>
+                      <td colspan="7">No measurement book entries found.</td>
+                    </tr>
                   <?php endif; ?>
                 </tbody>
               </table>
@@ -193,35 +205,45 @@ $mb_entries = $dummy_data;
   <!-- Initialize DataTables and Debug Modal -->
   <script>
     $(document).ready(function() {
-        // Initialize DataTables
-        try {
-            $('#mbEntriesTable').DataTable({
-                responsive: true,
-                pageLength: 10,
-                order: [[0, 'asc']], // Sort by ID ascending by default
-                language: {
-                    search: "Filter entries:",
-                    lengthMenu: "Show _MENU_ entries"
-                }
-            });
-            console.log('DataTables initialized successfully.');
-        } catch (e) {
-            console.error('Error initializing DataTables:', e);
-        }
-
-        // Debug: Check if modal button click is registering
-        $('.view-details-btn').on('click', function() {
-            console.log('View Details button clicked for modal:', $(this).data('bs-target'));
-            // Manually trigger the modal to test Bootstrap functionality
-            try {
-                var modalId = $(this).data('bs-target');
-                $(modalId).modal('show');
-                console.log('Manually triggered modal:', modalId);
-            } catch (e) {
-                console.error('Error manually triggering modal:', e);
-            }
+      // Initialize DataTables
+      try {
+        $('#mbEntriesTable').DataTable({
+          responsive: true,
+          pageLength: 10,
+          order: [
+            [0, 'asc']
+          ], // Sort by ID ascending by default
+          language: {
+            search: "Filter entries:",
+            lengthMenu: "Show _MENU_ entries"
+          }
         });
+        console.log('DataTables initialized successfully.');
+      } catch (e) {
+        console.error('Error initializing DataTables:', e);
+      }
+
+      // Debug: Check if modal button click is registering
+      $('.view-details-btn').on('click', function() {
+        console.log('View Details button clicked for modal:', $(this).data('bs-target'));
+        // Manually trigger the modal to test Bootstrap functionality
+        try {
+          var modalId = $(this).data('bs-target');
+          $(modalId).modal('show');
+          console.log('Manually triggered modal:', modalId);
+        } catch (e) {
+          console.error('Error manually triggering modal:', e);
+        }
+      });
     });
+
+    function handleFileUpload(input) {
+      const file = input.files[0];
+      if (file) {
+        alert(`Selected file: ${file.name}`);
+        // You can now send this file via AJAX or form submission
+      }
+    }
   </script>
 
 </body>
