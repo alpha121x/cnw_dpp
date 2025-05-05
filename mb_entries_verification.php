@@ -200,11 +200,6 @@ $mb_entries = $dummy_data;
 
   <?php include 'includes/footer-src-files.php'; ?>
 
-  <!-- Initialize DataTables and Debug Modal -->
-  <script>
-  
-  </script>
-
 </body>
 
 </html>
