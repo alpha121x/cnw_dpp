@@ -142,9 +142,14 @@ $mb_entries = $dummy_data;
                           </button>
                         </td>
                         <td>
-                          <a href="#view" class="text-decoration-none">
-                            <span class="badge bg-success me-1">View</span>
-                          </a>
+                          <button type="button"
+                            class="badge bg-success border-0 view-report-btn"
+                            data-id="<?php echo $entry['id']; ?>"
+                            data-bs-toggle="modal"
+                            data-bs-target="#reportsModal">
+                            View 
+                          </button>
+
                           <a href="services/generate_pdf.php?id=<?php echo $entry['id']; ?>" class="text-decoration-none" target="_blank">
                             <span class="badge bg-primary me-1">Download</span>
                           </a>
@@ -178,6 +183,33 @@ $mb_entries = $dummy_data;
                           </div>
                         </div>
                       </div>
+
+                      <!-- Shared Details Modal -->
+                      <div class="modal fade" id="reportsModal" tabindex="-1" aria-labelledby="reportsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="detailsModalLabel">MB Entry Report</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p><strong>Name:</strong> <span id="modalName"></span></p>
+                              <p><strong>Authority:</strong> <span id="modalAuthority"></span></p>
+                              <p><strong>Commencement:</strong> <span id="modalComm"></span></p>
+                              <p><strong>Completion:</strong> <span id="modalComp"></span></p>
+                              <p><strong>Measurement Date:</strong> <span id="modalMeasureDate"></span></p>
+                              <p><strong>DB Entry Date:</strong> <span id="modalDBDate"></span></p>
+                              <p><strong>Values:</strong> <span id="modalValues"></span></p>
+                              <p><strong>Total:</strong> <span id="modalTotal"></span></p>
+                              <p><strong>Unit:</strong> <span id="modalUnit"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                     <?php endforeach; ?>
                   <?php else: ?>
                     <tr>
@@ -201,5 +233,30 @@ $mb_entries = $dummy_data;
   <?php include 'includes/footer-src-files.php'; ?>
 
 </body>
+
+<script>
+  const mbData = <?php echo json_encode($mb_entries); ?>;
+  const unitMap = <?php echo json_encode($units); ?>;
+
+  document.querySelectorAll('.view-report-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const entryId = this.getAttribute('data-id');
+      const entry = mbData.find(e => e.id == entryId);
+
+      if (entry) {
+        document.getElementById('modalName').textContent = entry.name || 'N/A';
+        document.getElementById('modalAuthority').textContent = entry.authority || 'N/A';
+        document.getElementById('modalComm').textContent = entry.date_of_comm || 'N/A';
+        document.getElementById('modalComp').textContent = entry.date_of_comp || 'Not Completed';
+        document.getElementById('modalMeasureDate').textContent = entry.date_of_measurement || 'N/A';
+        document.getElementById('modalDBDate').textContent = entry.db_date_time || 'N/A';
+        document.getElementById('modalValues').textContent = entry.measurement_values || '{}';
+        document.getElementById('modalTotal').textContent = entry.measurement_total || '0';
+        document.getElementById('modalUnit').textContent = unitMap[entry.unit_id] || '';
+      }
+    });
+  });
+</script>
+
 
 </html>
