@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once 'auth.php';
 ?>
 
@@ -34,79 +34,92 @@ require_once 'auth.php';
       </nav>
     </div><!-- End Page Title -->
 
+    <?php
+    $role_id = $_SESSION['user']['role_id'] ?? null;
+    ?>
+
     <section class="section dashboard">
       <div class="row">
 
-        <!-- Work Order Creation Card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card info-card bg-primary text-white">
-            <div class="card-body">
-              <h5 class="card-title">Work Order Creation</h5>
-              <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-primary">
-                  <i class="bi bi-file-earmark-plus"></i>
-                </div>
-                <div class="ps-3">
-                  <p>Create and manage work orders for projects.</p>
+        <?php if ($role_id == 1): // Admin 
+        ?>
+          <!-- Work Order Creation Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="card info-card bg-primary text-white">
+              <div class="card-body">
+                <h5 class="card-title">Work Order Creation</h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-primary">
+                    <i class="bi bi-file-earmark-plus"></i>
+                  </div>
+                  <div class="ps-3">
+                    <p>Create and manage work orders for projects.</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div><!-- End Work Order Creation Card -->
+          <!-- Work Order Issuance Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="card info-card bg-success text-white">
+              <div class="card-body">
+                <h5 class="card-title">Work Order Issuance</h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-success">
+                    <i class="bi bi-file-check"></i>
+                  </div>
+                  <div class="ps-3">
+                    <p>Issue work orders to contractors and teams.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <?php endif; ?>
 
-        <!-- Work Order Issuance Card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card info-card bg-success text-white">
-            <div class="card-body">
-              <h5 class="card-title">Work Order Issuance</h5>
-              <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-success">
-                  <i class="bi bi-file-check"></i>
-                </div>
-                <div class="ps-3">
-                  <p>Issue work orders to contractors and teams.</p>
+        <?php if ($role_id == 1 || $role_id == 2): // Admin or Sub Engineer 
+        ?>
+          <!-- MB Entries Verification Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="card info-card bg-warning text-white">
+              <div class="card-body">
+                <h5 class="card-title">MB Entries Verification</h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-warning">
+                    <i class="bi bi-clipboard-check"></i>
+                  </div>
+                  <div class="ps-3">
+                    <p>Verify measurement book entries for accuracy.</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div><!-- End Work Order Issuance Card -->
+        <?php endif; ?>
 
-        <!-- MB Entries Verification Card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card info-card bg-warning text-white">
-            <div class="card-body">
-              <h5 class="card-title">MB Entries Verification</h5>
-              <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-warning">
-                  <i class="bi bi-clipboard-check"></i>
-                </div>
-                <div class="ps-3">
-                  <p>Verify measurement book entries for accuracy.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div><!-- End MB Entries Verification Card -->
-
-        <!-- Interim Payment Bill Submission Card -->
-        <div class="col-lg-3 col-md-6">
-          <div class="card info-card bg-info text-white">
-            <div class="card-body">
-              <h5 class="card-title">Payment Bill Submission</h5>
-              <div class="d-flex align-items-center">
-                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-info">
-                  <i class="bi bi-receipt"></i>
-                </div>
-                <div class="ps-3">
-                  <p>Contractors submit interim payment bills for review.</p>
+        <?php if ($role_id == 1 || $role_id == 3): // Admin or Contractor 
+        ?>
+          <!-- Interim Payment Bill Submission Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="card info-card bg-info text-white">
+              <div class="card-body">
+                <h5 class="card-title">Payment Bill Submission</h5>
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center bg-white text-info">
+                    <i class="bi bi-receipt"></i>
+                  </div>
+                  <div class="ps-3">
+                    <p>Contractors submit interim payment bills for review.</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div><!-- End Interim Payment Bill Submission Card -->
+        <?php endif; ?>
 
       </div>
     </section>
+
 
   </main><!-- End #main -->
 
