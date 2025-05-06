@@ -7,27 +7,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cost = $_POST['cost'];
     $date_of_commencement = $_POST['date_of_commencement'];
     $time_limit = $_POST['time_limit'];
+    $ref_no = $_POST['ref_no'] ?? null;
+    $ref_date = $_POST['ref_date'] ?? null;
+    $se_ref_no = $_POST['se_ref_no'] ?? null;
+    $se_ref_date = $_POST['se_ref_date'] ?? null;
+    $amount_numeric = $_POST['amount_numeric'];
+    $amount_words = $_POST['amount_words'] ?? null;
+    $subject = $_POST['subject'] ?? null;
     $items = $_POST['items'];
 
     try {
         $pdo->beginTransaction();
 
         // Insert into work orders
-        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorders (contractor_name, cost, date_of_commencement, time_limit) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$contractor_name, $cost, $date_of_commencement, $time_limit]);
+        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorders (contractor_name, cost, date_of_commencement, time_limit_months, ref_no, ref_date, se_ref_no, se_ref_date, amount_numeric, amount_words, subject) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$contractor_name, $cost, $date_of_commencement, $time_limit, $ref_no, $ref_date, $se_ref_no, $se_ref_date, $amount_numeric, $amount_words, $subject]);
         $work_order_id = $pdo->lastInsertId();
 
         // Insert items
-        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorder_items (work_order_id, item_name, description, quantity, unit, rate) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorder_details (workorder_id, item_id, quantity) VALUES (?, ?, ?)");
 
         foreach ($items as $item) {
             $stmt->execute([
                 $work_order_id,
-                $item['name'],
-                $item['description'] ?? '',
+                $item['id'],
                 $item['quantity'],
-                $item['unit'],
-                $item['rate']
             ]);
         }
 
@@ -39,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } catch (PDOException $e) {
         $pdo->rollBack();
+
+        // Log the error to error.log
+        $log_message = "[" . date('Y-m-d H:i:s') . "] Error creating work order for contractor: " . htmlspecialchars($contractor_name) . ". Work Order ID: " . (isset($work_order_id) ? $work_order_id : 'N/A') . ". Error: " . $e->getMessage() . "\n";
+        file_put_contents('error.log', $log_message, FILE_APPEND | LOCK_EX);
+
         $_SESSION['error'] = "Error: " . $e->getMessage();
         header("Location: ../create_work_orders.php");
         exit();

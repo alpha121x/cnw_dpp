@@ -41,8 +41,36 @@
                     <input type="date" class="form-control" name="date_of_commencement" id="date_of_commencement" required>
                   </div>
                   <div class="col-12 col-md-6">
-                    <label for="time_limit" class="form-label">Time Limit (days) <span class="text-danger">*</span></label>
+                    <label for="time_limit" class="form-label">Time Limit (Months) <span class="text-danger">*</span></label>
                     <input type="number" class="form-control" name="time_limit" id="time_limit" placeholder="Enter time limit in days" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="ref_no" class="form-label">Reference Number</label>
+                    <input type="text" class="form-control" name="ref_no" id="ref_no" placeholder="Enter reference number">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="ref_date" class="form-label">Reference Date</label>
+                    <input type="date" class="form-control" name="ref_date" id="ref_date">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="se_ref_no" class="form-label">Secondary Reference Number</label>
+                    <input type="text" class="form-control" name="se_ref_no" id="se_ref_no" placeholder="Enter secondary reference number">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="se_ref_date" class="form-label">Secondary Reference Date</label>
+                    <input type="date" class="form-control" name="se_ref_date" id="se_ref_date">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="amount_numeric" class="form-label">Amount (Numeric) <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" name="amount_numeric" id="amount_numeric" placeholder="Enter amount" step="0.01" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="amount_words" class="form-label">Amount (Words)</label>
+                    <input type="text" class="form-control" name="amount_words" id="amount_words" placeholder="Enter amount in words">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Enter subject">
                   </div>
                 </div>
 
@@ -50,7 +78,7 @@
                 <div id="items-container">
                   <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
                     <div class="col-12 col-md-2">
-                      <label class="form-label">Item Name <span class="text-danger">*</span></label>
+                      <label class="form-label">Item No.<span class="text-danger">*</span></label>
                       <select class="form-control item-select" name="items[0][id]" required>
                         <option value="">Select Item</option>
                         <?php
@@ -110,7 +138,7 @@
   <?php include 'includes/footer-src-files.php'; ?>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
       // Handle item selection
       function updateItemFields(selectElement) {
         const row = selectElement.closest('.item-row');
@@ -131,7 +159,7 @@
 
       // Handle adding new item rows
       let itemIndex = 1;
-      document.querySelector('.add-item-btn').addEventListener('click', function () {
+      document.querySelector('.add-item-btn').addEventListener('click', function() {
         const container = document.getElementById('items-container');
         const newRow = document.createElement('div');
         newRow.className = 'item-row row gy-2 gy-md-3 mb-3 align-items-end';
@@ -186,7 +214,7 @@
       });
 
       // Handle removing item rows
-      document.addEventListener('click', function (e) {
+      document.addEventListener('click', function(e) {
         if (e.target.classList.contains('remove-item-btn')) {
           e.target.closest('.item-row').remove();
         }
