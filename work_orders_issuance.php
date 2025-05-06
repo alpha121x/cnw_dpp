@@ -84,46 +84,112 @@ if (isset($_SESSION['success'])) {
                 </li>
               </ul>
               <div class="tab-content" id="workOrderTabContent">
-                <!-- Total Tab -->
-                <div class="tab-pane fade show active" id="total" role="tabpanel" aria-labelledby="total-tab">
-                  <table class="table table-bordered table-striped mt-3">
-                    <thead>
-                      <tr>
-                        <th>Sr</th>
-                        <th>Work Order</th>
-                        <th>Date of Commencement</th>
-                        <th>Name of Contractor</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php if (!empty($work_orders)): ?>
-                        <?php foreach ($work_orders as $index => $order): ?>
-                          <tr>
-                            <td><?php echo $index + 1; ?></td>
-                            <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
-                            <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
-                            <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
-                            <td>
-                              <select class="form-select form-select-sm issuance-select" data-work-order-id="<?php echo $order['id']; ?>">
-                                <option value="true" <?php echo $order['is_issued'] ? 'selected' : ''; ?>>Issued</option>
-                                <option value="false" <?php echo !$order['is_issued'] ? 'selected' : ''; ?>>Not Issued</option>
-                              </select>
-                            </td>
-                            <td>
-                              <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
-                            </td>
-                          </tr>
-                        <?php endforeach; ?>
-                      <?php else: ?>
-                        <tr>
-                          <td colspan="6">No work orders found.</td>
-                        </tr>
-                      <?php endif; ?>
-                    </tbody>
-                  </table>
-                </div>
+             <!-- Total Tab -->
+<div class="tab-pane fade show active" id="total" role="tabpanel" aria-labelledby="total-tab">
+  <table class="table table-bordered table-striped mt-3">
+    <thead>
+      <tr>
+        <th>Sr</th>
+        <th>Work Order</th>
+        <th>Date of Commencement</th>
+        <th>Name of Contractor</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if (!empty($work_orders)): ?>
+        <?php foreach ($work_orders as $index => $order): ?>
+          <tr>
+            <td><?php echo $index + 1; ?></td>
+            <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
+            <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
+            <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
+            <td>
+              <select class="form-select form-select-sm issuance-select" data-work-order-id="<?php echo $order['id']; ?>" <?php echo $order['is_issued'] ? 'disabled' : ''; ?>>
+                <option value="true" <?php echo $order['is_issued'] ? 'selected' : ''; ?>>Issued</option>
+                <option value="false" <?php echo !$order['is_issued'] ? 'selected' : ''; ?>>Not Issued</option>
+              </select>
+            </td>
+            <td>
+              <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <tr>
+          <td colspan="6">No work orders found.</td>
+        </tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Show success toast if exists
+  <?php if (!empty($creationSuccess)): ?>
+    const toastEl = document.getElementById("successToast");
+    const toastBody = document.getElementById("successToastMessage");
+    toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  <?php endif; ?>
+
+  // Handle issuance status update
+  document.querySelectorAll('.issuance-select').forEach(select => {
+    if (!select.disabled) { // Only add event listener to non-disabled selects
+      select.addEventListener('change', function() {
+        const workOrderId = this.getAttribute('data-work-order-id');
+        const isIssued = this.value === 'true';
+
+        fetch('services/update_workorder_issuance.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `work_order_id=${workOrderId}&is_issued=${isIssued}`
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const toastEl = document.getElementById("successToast");
+            const toastBody = document.getElementById("successToastMessage");
+            toastBody.textContent = "Issuance status updated successfully.";
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Disable the dropdown after successful update
+            this.disabled = true;
+
+            // Update the UI to reflect the new status (optional, since reload will handle it)
+            setTimeout(() => location.reload(), 1500);
+          } else {
+            const toastEl = document.getElementById("errorToast");
+            const toastBody = document.getElementById("errorToastMessage");
+            toastBody.textContent = data.error || "Failed to update issuance status.";
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Revert to original value if update fails
+            this.value = !isIssued ? 'true' : 'false';
+          }
+        })
+        .catch(error => {
+          const toastEl = document.getElementById("errorToast");
+          const toastBody = document.getElementById("errorToastMessage");
+          toastBody.textContent = "Error updating issuance status: " + error.message;
+          const toast = new bootstrap.Toast(toastEl);
+          toast.show();
+
+          // Revert to original value if update fails
+          this.value = !isIssued ? 'true' : 'false';
+        });
+      });
+    }
+  });
+});
+</script>
                 <!-- Issued Tab -->
                 <div class="tab-pane fade" id="issued" role="tabpanel" aria-labelledby="issued-tab">
                   <table class="table table-bordered table-striped mt-3">
@@ -225,58 +291,6 @@ if (isset($_SESSION['success'])) {
 
   <?php include 'includes/footer-src-files.php'; ?>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Show success toast if exists
-      <?php if (!empty($creationSuccess)): ?>
-        const toastEl = document.getElementById("successToast");
-        const toastBody = document.getElementById("successToastMessage");
-        toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
-        const toast = new bootstrap.Toast(toastEl);
-        toast.show();
-      <?php endif; ?>
-
-      // Handle issuance status update
-      document.querySelectorAll('.issuance-select').forEach(select => {
-        select.addEventListener('change', function() {
-          const workOrderId = this.getAttribute('data-work-order-id');
-          const isIssued = this.value === 'true';
-
-          fetch('services/update_workorder_issuance.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `work_order_id=${workOrderId}&is_issued=${isIssued}`
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              const toastEl = document.getElementById("successToast");
-              const toastBody = document.getElementById("successToastMessage");
-              toastBody.textContent = "Issuance status updated successfully.";
-              const toast = new bootstrap.Toast(toastEl);
-              toast.show();
-              setTimeout(() => location.reload(), 1500);
-            } else {
-              const toastEl = document.getElementById("errorToast");
-              const toastBody = document.getElementById("errorToastMessage");
-              toastBody.textContent = data.error || "Failed to update issuance status.";
-              const toast = new bootstrap.Toast(toastEl);
-              toast.show();
-            }
-          })
-          .catch(error => {
-            const toastEl = document.getElementById("errorToast");
-            const toastBody = document.getElementById("errorToastMessage");
-            toastBody.textContent = "Error updating issuance status: " + error.message;
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-          });
-        });
-      });
-    });
-  </script>
 </body>
 
 </html>
