@@ -1,44 +1,3 @@
-$(document).ready(function () {
-  let itemIndex = 1;
-
-  // Add new item row
-  $("#items-container").on("click", ".add-item-btn", function () {
-    const newRow = `
-    <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
-      <div class="col-12 col-md-2">
-        <input type="text" class="form-control" name="items[${itemIndex}][name]" placeholder="Enter item name" required>
-      </div>
-      <div class="col-12 col-md-3">
-        <input type="text" class="form-control" name="items[${itemIndex}][description]" placeholder="Enter description">
-      </div>
-      <div class="col-12 col-md-2">
-        <input type="number" class="form-control" name="items[${itemIndex}][quantity]" placeholder="Qty" min="1" required>
-      </div>
-      <div class="col-12 col-md-2">
-        <input type="text" class="form-control" name="items[${itemIndex}][unit]" placeholder="Unit" required>
-      </div>
-      <div class="col-12 col-md-2">
-        <input type="number" class="form-control" name="items[${itemIndex}][rate]" step="0.01" placeholder="Rate" required>
-      </div>
-      <div class="col-12 col-md-1 d-grid">
-        <button type="button" class="btn btn-danger btn-sm remove-item-btn">X</button>
-      </div>
-    </div>`;
-    $("#items-container").append(newRow);
-    itemIndex++;
-  });
-
-  // Remove item row
-  $("#items-container").on("click", ".remove-item-btn", function () {
-    if ($(".item-row").length > 1) {
-      $(this).closest(".item-row").remove();
-    } else {
-      alert("At least one item is required.");
-    }
-  });
-});
-
-
 document.addEventListener("DOMContentLoaded", function() {
   // Handle issuance status update
   document.querySelectorAll('.issuance-select').forEach(select => {
@@ -93,10 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 });
-
-
-
-
 
 $(document).ready(function() {
   // Initialize DataTables

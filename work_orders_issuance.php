@@ -74,13 +74,13 @@ if (isset($_SESSION['success'])) {
               <!-- Tabs -->
               <ul class="nav nav-tabs" id="workOrderTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true">Total Work Orders</button>
+                  <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true" style="background-color: #6c757d; color: white;">Total Work Orders</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued" type="button" role="tab" aria-controls="issued" aria-selected="false">Issued Work Orders</button>
+                  <button class="nav-link" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued" type="button" role="tab" aria-controls="issued" aria-selected="false" style="background-color: #28a745; color: white;">Issued Work Orders</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="not-issued-tab" data-bs-toggle="tab" data-bs-target="#not-issued" type="button" role="tab" aria-controls="not-issued" aria-selected="false">Not Issued Work Orders</button>
+                  <button class="nav-link" id="not-issued-tab" data-bs-toggle="tab" data-bs-target="#not-issued" type="button" role="tab" aria-controls="not-issued" aria-selected="false" style="background-color: #ffc107; color: black;">Not Issued Work Orders</button>
                 </li>
               </ul>
               <div class="tab-content" id="workOrderTabContent">
@@ -228,15 +228,14 @@ if (isset($_SESSION['success'])) {
 </body>
 
 <script>
-    // Show success toast if exists
-    <?php if (!empty($creationSuccess)): ?>
+  // Show success toast if exists
+  <?php if (!empty($creationSuccess)): ?>
     const toastEl = document.getElementById("successToast");
     const toastBody = document.getElementById("successToastMessage");
     toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
     const toast = new bootstrap.Toast(toastEl);
     toast.show();
   <?php endif; ?>
-
 </script>
 
 </html>

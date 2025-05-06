@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $subject = $_POST['subject'] ?? null;
     $items = $_POST['items'];
 
+    $log_message = "[" . date('Y-m-d H:i:s') . "] $items\n";
+
     try {
         $pdo->beginTransaction();
 
