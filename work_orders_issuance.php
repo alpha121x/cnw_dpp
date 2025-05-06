@@ -74,13 +74,13 @@ if (isset($_SESSION['success'])) {
               <!-- Tabs -->
               <ul class="nav nav-tabs" id="workOrderTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true">Total</button>
+                  <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true">Total Work Orders</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued" type="button" role="tab" aria-controls="issued" aria-selected="false">Issued</button>
+                  <button class="nav-link" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued" type="button" role="tab" aria-controls="issued" aria-selected="false">Issued Work Orders</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="not-issued-tab" data-bs-toggle="tab" data-bs-target="#not-issued" type="button" role="tab" aria-controls="not-issued" aria-selected="false">Not Issued</button>
+                  <button class="nav-link" id="not-issued-tab" data-bs-toggle="tab" data-bs-target="#not-issued" type="button" role="tab" aria-controls="not-issued" aria-selected="false">Not Issued Work Orders</button>
                 </li>
               </ul>
               <div class="tab-content" id="workOrderTabContent">
