@@ -38,64 +38,6 @@ $(document).ready(function () {
   });
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  const selects = document.querySelectorAll(".contractor-select");
-  selects.forEach((select) => {
-    select.addEventListener("change", function () {
-      const workOrderId = this.getAttribute("data-work-order-id");
-      const contractorId = this.value;
-      const contractorName = this.options[this.selectedIndex].getAttribute(
-        "data-contractor-name"
-      );
-
-      // Send AJAX request to assign contractor
-      fetch("services/update_work_order_issuance.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `work_order_id=${workOrderId}&contractor_id=${contractorId}`,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Update UI: Replace dropdown with contractor name and show Issued badge
-            const td = select.parentElement;
-            td.textContent = contractorName;
-            const actionTd = td.nextElementSibling;
-            actionTd.innerHTML = '<span class="badge bg-success">Issued</span>';
-
-            // Show success toast
-            const successToast = new bootstrap.Toast(
-              document.getElementById("successToast")
-            );
-            document.getElementById("successToastMessage").textContent =
-              "Contractor assigned successfully!";
-            successToast.show();
-          } else {
-            // Show error toast
-            const errorToast = new bootstrap.Toast(
-              document.getElementById("errorToast")
-            );
-            document.getElementById("errorToastMessage").textContent =
-              data.message || "Failed to assign contractor.";
-            errorToast.show();
-          }
-        })
-        .catch((error) => {
-          // Show error toast
-          const errorToast = new bootstrap.Toast(
-            document.getElementById("errorToast")
-          );
-          document.getElementById("errorToastMessage").textContent =
-            "Error: " + error.message;
-          errorToast.show();
-        });
-    });
-  });
-});
-
-
 $(document).ready(function() {
   // Initialize DataTables
   try {

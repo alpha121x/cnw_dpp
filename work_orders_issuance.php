@@ -1,6 +1,6 @@
 <?php
 require_once 'auth.php';
-require_once 'services/db_config.php'; // Database configuration
+require_once 'services/db_config.php';
 
 // Redirect to login if not authenticated
 if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
@@ -11,32 +11,20 @@ if (!isset($_SESSION['loggedin']) || !$_SESSION['loggedin']) {
 // Fetch work orders with contractor details
 try {
   $stmt = $pdo->query("
-        SELECT wo.id, wo.cost, wo.date_of_commencement, wo.time_limit, wo.contractor_id, c.name AS contractor_name
-        FROM public.tbl_work_orders wo
-        LEFT JOIN public.tbl_contractors c ON wo.contractor_id = c.id
+        SELECT id, cost, date_of_commencement, time_limit_months, created_at, contractor_name, ref_no, ref_date, se_ref_no, se_ref_date, amount_numeric, amount_words, is_issued, subject
+        FROM public.tbl_workorders
     ");
   $work_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
   $_SESSION['error'] = "Error fetching work orders: " . $e->getMessage();
 }
 
-// Fetch contractors for dropdown
-try {
-  $stmt = $pdo->query("SELECT id, name FROM public.tbl_contractors");
-  $contractors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-  $_SESSION['error'] = "Error fetching contractors: " . $e->getMessage();
-}
-?>
-
-<?php
 $creationSuccess = '';
 if (isset($_SESSION['success'])) {
   $creationSuccess = $_SESSION['success'];
-  unset($_SESSION['success']); // prevent repeat on refresh
+  unset($_SESSION['success']);
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -83,58 +71,146 @@ if (isset($_SESSION['success'])) {
                   <div class="toast-body" id="errorToastMessage"></div>
                 </div>
               </div>
-              <table id="workOrderTable" class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>Sr</th>
-                    <th>Work Order</th>
-                    <th>Date of Commenecement</th>
-                    <th>Name of Contractor</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php if (!empty($work_orders)): ?>
-                    <?php foreach ($work_orders as $index => $order): ?>
+              <!-- Tabs -->
+              <ul class="nav nav-tabs" id="workOrderTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true">Total</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued" type="button" role="tab" aria-controls="issued" aria-selected="false">Issued</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="not-issued-tab" data-bs-toggle="tab" data-bs-target="#not-issued" type="button" role="tab" aria-controls="not-issued" aria-selected="false">Not Issued</button>
+                </li>
+              </ul>
+              <div class="tab-content" id="workOrderTabContent">
+                <!-- Total Tab -->
+                <div class="tab-pane fade show active" id="total" role="tabpanel" aria-labelledby="total-tab">
+                  <table class="table table-bordered table-striped mt-3">
+                    <thead>
                       <tr>
-                        <td><?php echo $index + 1; ?></td>
-                        <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
-                        <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
-                        <td>
-                          <?php if ($order['contractor_id']): ?>
-                            <?php echo htmlspecialchars($order['contractor_name']); ?>
-                          <?php else: ?>
-                            <select class="form-select form-select-sm contractor-select" data-work-order-id="<?php echo $order['id']; ?>" name="contractor_id" required>
-                              <option value="" disabled selected>Select Contractor</option>
-                              <?php foreach ($contractors as $contractor): ?>
-                                <option value="<?php echo $contractor['id']; ?>" data-contractor-name="<?php echo htmlspecialchars($contractor['name']); ?>">
-                                  <?php echo htmlspecialchars($contractor['name']); ?>
-                                </option>
-                              <?php endforeach; ?>
-                            </select>
-                          <?php endif; ?>
-                        </td>
-                        <td>
-                          <?php if ($order['contractor_id']): ?>
-                            <span class="badge bg-success ms-2">Issued</span>
-                          <?php else: ?>
-                            <span class="badge bg-warning text-dark ms-2">Not Issued</span>
-                          <?php endif; ?>
-                        </td>
-
-                        <td>
-                          <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
-                        </td>
+                        <th>Sr</th>
+                        <th>Work Order</th>
+                        <th>Date of Commencement</th>
+                        <th>Name of Contractor</th>
+                        <th>Status</th>
+                        <th>Action</th>
                       </tr>
-                    <?php endforeach; ?>
-                  <?php else: ?>
-                    <tr>
-                      <td colspan="5">No work orders found.</td>
-                    </tr>
-                  <?php endif; ?>
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody>
+                      <?php if (!empty($work_orders)): ?>
+                        <?php foreach ($work_orders as $index => $order): ?>
+                          <tr>
+                            <td><?php echo $index + 1; ?></td>
+                            <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
+                            <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
+                            <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
+                            <td>
+                              <select class="form-select form-select-sm issuance-select" data-work-order-id="<?php echo $order['id']; ?>">
+                                <option value="true" <?php echo $order['is_issued'] ? 'selected' : ''; ?>>Issued</option>
+                                <option value="false" <?php echo !$order['is_issued'] ? 'selected' : ''; ?>>Not Issued</option>
+                              </select>
+                            </td>
+                            <td>
+                              <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
+                      <?php else: ?>
+                        <tr>
+                          <td colspan="6">No work orders found.</td>
+                        </tr>
+                      <?php endif; ?>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Issued Tab -->
+                <div class="tab-pane fade" id="issued" role="tabpanel" aria-labelledby="issued-tab">
+                  <table class="table table-bordered table-striped mt-3">
+                    <thead>
+                      <tr>
+                        <th>Sr</th>
+                        <th>Work Order</th>
+                        <th>Date of Commencement</th>
+                        <th>Name of Contractor</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php if (!empty($work_orders)): ?>
+                        <?php $index = 0; ?>
+                        <?php foreach ($work_orders as $order): ?>
+                          <?php if ($order['is_issued']): ?>
+                            <tr>
+                              <td><?php echo ++$index; ?></td>
+                              <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
+                              <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
+                              <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
+                              <td><span class="badge bg-success ms-2">Issued</span></td>
+                              <td>
+                                <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+                              </td>
+                            </tr>
+                          <?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php if ($index == 0): ?>
+                          <tr>
+                            <td colspan="6">No issued work orders found.</td>
+                          </tr>
+                        <?php endif; ?>
+                      <?php else: ?>
+                        <tr>
+                          <td colspan="6">No work orders found.</td>
+                        </tr>
+                      <?php endif; ?>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Not Issued Tab -->
+                <div class="tab-pane fade" id="not-issued" role="tabpanel" aria-labelledby="not-issued-tab">
+                  <table class="table table-bordered table-striped mt-3">
+                    <thead>
+                      <tr>
+                        <th>Sr</th>
+                        <th>Work Order</th>
+                        <th>Date of Commencement</th>
+                        <th>Name of Contractor</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php if (!empty($work_orders)): ?>
+                        <?php $index = 0; ?>
+                        <?php foreach ($work_orders as $order): ?>
+                          <?php if (!$order['is_issued']): ?>
+                            <tr>
+                              <td><?php echo ++$index; ?></td>
+                              <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
+                              <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
+                              <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
+                              <td><span class="badge bg-warning text-dark ms-2">Not Issued</span></td>
+                              <td>
+                                <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+                              </td>
+                            </tr>
+                          <?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php if ($index == 0): ?>
+                          <tr>
+                            <td colspan="6">No not issued work orders found.</td>
+                          </tr>
+                        <?php endif; ?>
+                      <?php else: ?>
+                        <tr>
+                          <td colspan="6">No work orders found.</td>
+                        </tr>
+                      <?php endif; ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -148,19 +224,59 @@ if (isset($_SESSION['success'])) {
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <?php include 'includes/footer-src-files.php'; ?>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Show success toast if exists
+      <?php if (!empty($creationSuccess)): ?>
+        const toastEl = document.getElementById("successToast");
+        const toastBody = document.getElementById("successToastMessage");
+        toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+      <?php endif; ?>
+
+      // Handle issuance status update
+      document.querySelectorAll('.issuance-select').forEach(select => {
+        select.addEventListener('change', function() {
+          const workOrderId = this.getAttribute('data-work-order-id');
+          const isIssued = this.value === 'true';
+
+          fetch('services/update_workorder_issuance.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `work_order_id=${workOrderId}&is_issued=${isIssued}`
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const toastEl = document.getElementById("successToast");
+              const toastBody = document.getElementById("successToastMessage");
+              toastBody.textContent = "Issuance status updated successfully.";
+              const toast = new bootstrap.Toast(toastEl);
+              toast.show();
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              const toastEl = document.getElementById("errorToast");
+              const toastBody = document.getElementById("errorToastMessage");
+              toastBody.textContent = data.error || "Failed to update issuance status.";
+              const toast = new bootstrap.Toast(toastEl);
+              toast.show();
+            }
+          })
+          .catch(error => {
+            const toastEl = document.getElementById("errorToast");
+            const toastBody = document.getElementById("errorToastMessage");
+            toastBody.textContent = "Error updating issuance status: " + error.message;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+          });
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
-
-<?php if (!empty($creationSuccess)): ?>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const toastEl = document.getElementById("successToast");
-      const toastBody = document.getElementById("successToastMessage");
-
-      toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
-      const toast = new bootstrap.Toast(toastEl);
-      toast.show();
-    });
-  </script>
-<?php endif; ?>
