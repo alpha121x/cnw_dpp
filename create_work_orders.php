@@ -144,75 +144,75 @@
   <?php include 'includes/footer-src-files.php'; ?>
 
   <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Function to update item fields based on selection
-  function updateItemFields(selectElement) {
-    const row = selectElement.closest('.item-row');
-    const descriptionInput = row.querySelector('.item-description');
-    const unitInput = row.querySelector('.item-unit');
-    const rateInput = row.querySelector('.item-rate');
-    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to update item fields based on selection
+      function updateItemFields(selectElement) {
+        const row = selectElement.closest('.item-row');
+        const descriptionInput = row.querySelector('.item-description');
+        const unitInput = row.querySelector('.item-unit');
+        const rateInput = row.querySelector('.item-rate');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
 
-    descriptionInput.value = selectedOption.getAttribute('data-description') || '';
-    unitInput.value = selectedOption.getAttribute('data-unit') || '';
-    rateInput.value = selectedOption.getAttribute('data-rate') || '';
-  }
+        descriptionInput.value = selectedOption.getAttribute('data-description') || '';
+        unitInput.value = selectedOption.getAttribute('data-unit') || '';
+        rateInput.value = selectedOption.getAttribute('data-rate') || '';
+      }
 
-  // Function to load items based on selected category
-  function loadItemsForCategory(categorySelect, itemSelect) {
-    const category = categorySelect.value;
-    itemSelect.disabled = true;
-    itemSelect.innerHTML = '<option value="">Select Item</option>';
+      // Function to load items based on selected category
+      function loadItemsForCategory(categorySelect, itemSelect) {
+        const category = categorySelect.value;
+        itemSelect.disabled = true;
+        itemSelect.innerHTML = '<option value="">Select Item</option>';
 
-    if (category) {
-      fetch('services/get_items_by_category.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `category=${encodeURIComponent(category)}`
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          data.items.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.id;
-            option.textContent = `${item.item_no} - ${item.category}`;
-            option.setAttribute('data-description', item.description);
-            option.setAttribute('data-unit', item.unit);
-            option.setAttribute('data-rate', item.rate_numeric);
-            itemSelect.appendChild(option);
-          });
-          itemSelect.disabled = false;
-        } else {
-          itemSelect.innerHTML = `<option value="">Error: ${data.error}</option>`;
+        if (category) {
+          fetch('services/get_items_by_category.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `category=${encodeURIComponent(category)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                data.items.forEach(item => {
+                  const option = document.createElement('option');
+                  option.value = item.id;
+                  option.textContent = `${item.item_no}`;
+                  option.setAttribute('data-description', item.description);
+                  option.setAttribute('data-unit', item.unit);
+                  option.setAttribute('data-rate', item.rate_numeric);
+                  itemSelect.appendChild(option);
+                });
+                itemSelect.disabled = false;
+              } else {
+                itemSelect.innerHTML = `<option value="">Error: ${data.error}</option>`;
+              }
+            })
+            .catch(error => {
+              itemSelect.innerHTML = `<option value="">Error loading items: ${error.message}</option>`;
+            });
         }
-      })
-      .catch(error => {
-        itemSelect.innerHTML = `<option value="">Error loading items: ${error.message}</option>`;
+      }
+
+      // Attach event listeners to existing category and item selects
+      document.querySelectorAll('.category-select').forEach(categorySelect => {
+        const row = categorySelect.closest('.item-row');
+        const itemSelect = row.querySelector('.item-select');
+        categorySelect.addEventListener('change', () => loadItemsForCategory(categorySelect, itemSelect));
       });
-    }
-  }
 
-  // Attach event listeners to existing category and item selects
-  document.querySelectorAll('.category-select').forEach(categorySelect => {
-    const row = categorySelect.closest('.item-row');
-    const itemSelect = row.querySelector('.item-select');
-    categorySelect.addEventListener('change', () => loadItemsForCategory(categorySelect, itemSelect));
-  });
+      document.querySelectorAll('.item-select').forEach(select => {
+        select.addEventListener('change', () => updateItemFields(select));
+      });
 
-  document.querySelectorAll('.item-select').forEach(select => {
-    select.addEventListener('change', () => updateItemFields(select));
-  });
-
-  // Handle adding new item rows
-  let itemIndex = 1;
-  document.querySelector('.add-item-btn').addEventListener('click', function() {
-    const container = document.getElementById('items-container');
-    const newRow = document.createElement('div');
-    newRow.className = 'item-row row gy-2 gy-md-3 mb-3 align-items-end';
-    newRow.innerHTML = `
+      // Handle adding new item rows
+      let itemIndex = 1;
+      document.querySelector('.add-item-btn').addEventListener('click', function() {
+        const container = document.getElementById('items-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row row gy-2 gy-md-3 mb-3 align-items-end';
+        newRow.innerHTML = `
       <div class="col-12 col-md-2">
         <label class="form-label">Category <span class="text-danger">*</span></label>
         <select class="form-control category-select" name="items[${itemIndex}][category]" required>
@@ -236,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <option value="">Select Item</option>
         </select>
       </div>
+      input type="hidden" class="form-control item-description" name="items[${itemIndex}][item_no]">
       <div class="col-12 col-md-3">
         <label class="form-label">Description</label>
         <input type="text" class="form-control item-description" name="items[${itemIndex}][description]" placeholder="Enter description" readonly>
@@ -256,32 +257,32 @@ document.addEventListener('DOMContentLoaded', function() {
         <button type="button" class="btn btn-danger btn-sm remove-item-btn">-</button>
       </div>
     `;
-    container.appendChild(newRow);
+        container.appendChild(newRow);
 
-    // Attach event listener to new category select
-    const newCategorySelect = newRow.querySelector('.category-select');
-    const newItemSelect = newRow.querySelector('.item-select');
-    newCategorySelect.addEventListener('change', () => loadItemsForCategory(newCategorySelect, newItemSelect));
+        // Attach event listener to new category select
+        const newCategorySelect = newRow.querySelector('.category-select');
+        const newItemSelect = newRow.querySelector('.item-select');
+        newCategorySelect.addEventListener('change', () => loadItemsForCategory(newCategorySelect, newItemSelect));
 
-    // Attach event listener to new item select
-    newItemSelect.addEventListener('change', () => updateItemFields(newItemSelect));
+        // Attach event listener to new item select
+        newItemSelect.addEventListener('change', () => updateItemFields(newItemSelect));
 
-    // Attach event listener to remove button
-    newRow.querySelector('.remove-item-btn').addEventListener('click', () => {
-      newRow.remove();
+        // Attach event listener to remove button
+        newRow.querySelector('.remove-item-btn').addEventListener('click', () => {
+          newRow.remove();
+        });
+
+        itemIndex++;
+      });
+
+      // Handle removing item rows
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-item-btn')) {
+          e.target.closest('.item-row').remove();
+        }
+      });
     });
-
-    itemIndex++;
-  });
-
-  // Handle removing item rows
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-item-btn')) {
-      e.target.closest('.item-row').remove();
-    }
-  });
-});
-</script>
+  </script>
 </body>
 
 </html>

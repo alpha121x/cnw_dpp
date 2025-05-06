@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $subject = $_POST['subject'] ?? null;
     $items = $_POST['items'];
 
-    $log_message = "[" . date('Y-m-d H:i:s') . "] $items\n";
+    $log_message = "[" . date('Y-m-d H:i:s') . "] " . json_encode($items) . "\n";
 
     try {
         $pdo->beginTransaction();
@@ -27,12 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $work_order_id = $pdo->lastInsertId();
 
         // Insert items
-        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorder_details (workorder_id, item_id, quantity) VALUES (?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorder_qty (workorder_id, item_id, quantity) VALUES (?, ?, ?)");
 
         foreach ($items as $item) {
+            // Fetch item_no from tbl_workorder_items using the item id
+            $itemStmt = $pdo->prepare("SELECT item_no FROM public.tbl_workorder_items WHERE id = ?");
+            $itemStmt->execute([$item['id']]);
+            $item_no = $itemStmt->fetchColumn();
+
+            if ($item_no === false) {
+                throw new PDOException("Item with ID {$item['id']} not found.");
+            }
+
+            // Insert item_no instead of id
             $stmt->execute([
                 $work_order_id,
-                $item['id'],
+                $item_no, // Store item_no instead of id
                 $item['quantity'],
             ]);
         }
