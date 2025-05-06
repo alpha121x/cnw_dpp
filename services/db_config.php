@@ -1,10 +1,16 @@
 <?php
 // Database connection settings
-$host = '172.20.82.25';
+// $host = '172.20.82.25';
+// $dbname = 'db_cnw_dpp'; // Your database name
+// $user = 'postgres'; // Your PostgreSQL username
+// $password = 'diamondx'; // Your PostgreSQL password
+// $port = '5432'; // Default PostgreSQL port
+
+$host = 'localhost';
 $dbname = 'db_cnw_dpp'; // Your database name
 $user = 'postgres'; // Your PostgreSQL username
-$password = 'diamondx'; // Your PostgreSQL password
-$port = '5432'; // Default PostgreSQL port
+$password = '1234'; // Your PostgreSQL password
+$port = '5433'; // Default PostgreSQL port
 
 // DSN (Data Source Name) for PostgreSQL
 $dsn = "pgsql:host=$host;port=$port;dbname=$dbname";

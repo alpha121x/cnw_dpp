@@ -105,138 +105,46 @@ if (isset($_SESSION['success'])) {
                   <div class="toast-body" id="errorToastMessage"></div>
                 </div>
               </div>
-              <!-- Tabs -->
-              <ul class="nav nav-tabs" id="workOrderTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true" style="background-color: #6c757d; color: white;">Total Work Orders</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="issued-tab" data-bs-toggle="tab" data-bs-target="#issued" type="button" role="tab" aria-controls="issued" aria-selected="false" style="background-color: #28a745; color: white;">Issued Work Orders</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="not-issued-tab" data-bs-toggle="tab" data-bs-target="#not-issued" type="button" role="tab" aria-controls="not-issued" aria-selected="false" style="background-color: #ffc107; color: black;">Not Issued Work Orders</button>
-                </li>
-              </ul>
-              <div class="tab-content" id="workOrderTabContent">
-                <!-- Total Tab -->
-                <div class="tab-pane fade show active" id="total" role="tabpanel" aria-labelledby="total-tab">
-                  <table class="table table-bordered table-striped mt-3">
-                    <thead>
+              <!-- Single Table -->
+              <table class="table table-bordered table-striped mt-3">
+                <thead>
+                  <tr>
+                    <th>Sr</th>
+                    <th>Work Order</th>
+                    <th>Date of Commencement</th>
+                    <th>Name of Contractor</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php if (!empty($work_orders)): ?>
+                    <?php foreach ($work_orders as $index => $order): ?>
                       <tr>
-                        <th>Sr</th>
-                        <th>Work Order</th>
-                        <th>Date of Commencement</th>
-                        <th>Name of Contractor</th>
-                        <th>Status</th>
+                        <td><?php echo $index + 1; ?></td>
+                        <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
+                        <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
+                        <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
+                        <td>
+                          <div class="form-check form-switch">
+                            <input class="form-check-input issuance-switch" type="checkbox" id="issuanceSwitch-<?php echo $order['id']; ?>" data-work-order-id="<?php echo $order['id']; ?>" <?php echo $order['is_issued'] ? 'checked' : ''; ?> <?php echo $order['is_issued'] ? 'disabled' : ''; ?>>
+                            <label class="form-check-label" for="issuanceSwitch-<?php echo $order['id']; ?>">
+                              <?php echo $order['is_issued'] ? 'Issued' : 'Not Issued'; ?>
+                            </label>
+                          </div>
+                        </td>
+                        <td>
+                          <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      <?php if (!empty($work_orders)): ?>
-                        <?php foreach ($work_orders as $index => $order): ?>
-                          <tr>
-                            <td><?php echo $index + 1; ?></td>
-                            <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
-                            <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
-                            <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
-                            <td>
-                              <select class="form-select form-select-sm issuance-select" data-work-order-id="<?php echo $order['id']; ?>" <?php echo $order['is_issued'] ? 'disabled' : ''; ?>>
-                                <option value="true" <?php echo $order['is_issued'] ? 'selected' : ''; ?>>Issued</option>
-                                <option value="false" <?php echo !$order['is_issued'] ? 'selected' : ''; ?>>Not Issued</option>
-                              </select>
-                            </td>
-                          </tr>
-                        <?php endforeach; ?>
-                      <?php else: ?>
-                        <tr>
-                          <td colspan="6">No work orders found.</td>
-                        </tr>
-                      <?php endif; ?>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- Issued Tab -->
-                <div class="tab-pane fade" id="issued" role="tabpanel" aria-labelledby="issued-tab">
-                  <table class="table table-bordered table-striped mt-3">
-                    <thead>
-                      <tr>
-                        <th>Sr</th>
-                        <th>Work Order</th>
-                        <th>Date of Commencement</th>
-                        <th>Name of Contractor</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php if (!empty($work_orders)): ?>
-                        <?php $index = 0; ?>
-                        <?php foreach ($work_orders as $order): ?>
-                          <?php if ($order['is_issued']): ?>
-                            <tr>
-                              <td><?php echo ++$index; ?></td>
-                              <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
-                              <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
-                              <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
-                              <td><span class="badge bg-success ms-2">Issued</span></td>
-                              <td>
-                                <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
-                              </td>
-                            </tr>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
-                        <?php if ($index == 0): ?>
-                          <tr>
-                            <td colspan="6">No issued work orders found.</td>
-                          </tr>
-                        <?php endif; ?>
-                      <?php else: ?>
-                        <tr>
-                          <td colspan="6">No work orders found.</td>
-                        </tr>
-                      <?php endif; ?>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- Not Issued Tab -->
-                <div class="tab-pane fade" id="not-issued" role="tabpanel" aria-labelledby="not-issued-tab">
-                  <table class="table table-bordered table-striped mt-3">
-                    <thead>
-                      <tr>
-                        <th>Sr</th>
-                        <th>Work Order</th>
-                        <th>Date of Commencement</th>
-                        <th>Name of Contractor</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php if (!empty($work_orders)): ?>
-                        <?php $index = 0; ?>
-                        <?php foreach ($work_orders as $order): ?>
-                          <?php if (!$order['is_issued']): ?>
-                            <tr>
-                              <td><?php echo ++$index; ?></td>
-                              <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
-                              <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
-                              <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
-                              <td><span class="badge bg-warning text-dark ms-2">Not Issued</span></td>    
-                            </tr>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
-                        <?php if ($index == 0): ?>
-                          <tr>
-                            <td colspan="6">No not issued work orders found.</td>
-                          </tr>
-                        <?php endif; ?>
-                      <?php else: ?>
-                        <tr>
-                          <td colspan="6">No work orders found.</td>
-                        </tr>
-                      <?php endif; ?>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    <?php endforeach; ?>
+                  <?php else: ?>
+                    <tr>
+                      <td colspan="6">No work orders found.</td>
+                    </tr>
+                  <?php endif; ?>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -251,17 +159,71 @@ if (isset($_SESSION['success'])) {
 
   <?php include 'includes/footer-src-files.php'; ?>
 
-</body>
+  <script>
+    // Show success toast if exists
+    <?php if (!empty($creationSuccess)): ?>
+      const toastEl = document.getElementById("successToast");
+      const toastBody = document.getElementById("successToastMessage");
+      toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    <?php endif; ?>
 
-<script>
-  // Show success toast if exists
-  <?php if (!empty($creationSuccess)): ?>
-    const toastEl = document.getElementById("successToast");
-    const toastBody = document.getElementById("successToastMessage");
-    toastBody.textContent = <?php echo json_encode($creationSuccess); ?>;
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
-  <?php endif; ?>
-</script>
+    // Handle issuance status update
+    document.querySelectorAll('.issuance-switch').forEach(switchElement => {
+      if (!switchElement.disabled) {
+        switchElement.addEventListener('change', function() {
+          const workOrderId = this.getAttribute('data-work-order-id');
+          const isIssued = this.checked;
+
+          fetch('services/update_workorder_issuance.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `work_order_id=${workOrderId}&is_issued=${isIssued}`
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const toastEl = document.getElementById("successToast");
+              const toastBody = document.getElementById("successToastMessage");
+              toastBody.textContent = "Issuance status updated successfully.";
+              const toast = new bootstrap.Toast(toastEl);
+              toast.show();
+
+              // Disable the switch after successful update
+              this.disabled = true;
+              const label = this.nextElementSibling;
+              label.textContent = isIssued ? 'Issued' : 'Not Issued';
+
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              const toastEl = document.getElementById("errorToast");
+              const toastBody = document.getElementById("errorToastMessage");
+              toastBody.textContent = data.error || "Failed to update issuance status.";
+              const toast = new bootstrap.Toast(toastEl);
+              toast.show();
+
+              // Revert to original value if update fails
+              this.checked = !isIssued;
+            }
+          })
+          .catch(error => {
+            const toastEl = document.getElementById("errorToast");
+            const toastBody = document.getElementById("errorToastMessage");
+            toastBody.textContent = "Error updating issuance status: " + error.message;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Revert to original value if update fails
+            this.checked = !isIssued;
+          });
+        });
+      }
+    });
+  </script>
+
+</body>
 
 </html>
