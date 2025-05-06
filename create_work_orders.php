@@ -51,11 +51,25 @@
                   <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
                     <div class="col-12 col-md-2">
                       <label class="form-label">Item Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="items[0][name]" placeholder="Enter item name" required>
+                      <select class="form-control item-select" name="items[0][id]" required>
+                        <option value="">Select Item</option>
+                        <?php
+                        include 'services/db_config.php';
+                        try {
+                          $query = "SELECT id, item_no, category, description, unit, rate_numeric, rate_words, unit_basic FROM public.tbl_workorder_items";
+                          $stmt = $pdo->query($query);
+                          while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<option value='{$row['id']}' data-description='{$row['description']}' data-unit='{$row['unit']}' data-rate='{$row['rate_numeric']}'>{$row['item_no']} - {$row['category']}</option>";
+                          }
+                        } catch (PDOException $e) {
+                          echo "<option value=''>Error loading items: " . htmlspecialchars($e->getMessage()) . "</option>";
+                        }
+                        ?>
+                      </select>
                     </div>
                     <div class="col-12 col-md-3">
                       <label class="form-label">Description</label>
-                      <input type="text" class="form-control" name="items[0][description]" placeholder="Enter description">
+                      <input type="text" class="form-control item-description" name="items[0][description]" placeholder="Enter description" readonly>
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Quantity <span class="text-danger">*</span></label>
@@ -63,11 +77,11 @@
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Unit <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="items[0][unit]" placeholder="Unit" required>
+                      <input type="text" class="form-control item-unit" name="items[0][unit]" placeholder="Unit" readonly required>
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Rate <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" name="items[0][rate]" step="0.01" placeholder="Rate" required>
+                      <input type="number" class="form-control item-rate" name="items[0][rate]" step="0.01" placeholder="Rate" readonly required>
                     </div>
                     <div class="col-12 col-md-1 d-grid">
                       <button type="button" class="btn btn-secondary btn-sm add-item-btn">+</button>
@@ -81,8 +95,6 @@
                   </div>
                 </div>
               </form>
-
-
             </div>
           </div>
         </div>
@@ -96,6 +108,92 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <?php include 'includes/footer-src-files.php'; ?>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Handle item selection
+      function updateItemFields(selectElement) {
+        const row = selectElement.closest('.item-row');
+        const descriptionInput = row.querySelector('.item-description');
+        const unitInput = row.querySelector('.item-unit');
+        const rateInput = row.querySelector('.item-rate');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        descriptionInput.value = selectedOption.getAttribute('data-description') || '';
+        unitInput.value = selectedOption.getAttribute('data-unit') || '';
+        rateInput.value = selectedOption.getAttribute('data-rate') || '';
+      }
+
+      // Attach event listeners to existing selects
+      document.querySelectorAll('.item-select').forEach(select => {
+        select.addEventListener('change', () => updateItemFields(select));
+      });
+
+      // Handle adding new item rows
+      let itemIndex = 1;
+      document.querySelector('.add-item-btn').addEventListener('click', function () {
+        const container = document.getElementById('items-container');
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row row gy-2 gy-md-3 mb-3 align-items-end';
+        newRow.innerHTML = `
+          <div class="col-12 col-md-2">
+            <label class="form-label">Item Name <span class="text-danger">*</span></label>
+            <select class="form-control item-select" name="items[${itemIndex}][id]" required>
+              <option value="">Select Item</option>
+              <?php
+              try {
+                $stmt = $pdo->query($query);
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                  echo "<option value='{$row['id']}' data-description='{$row['description']}' data-unit='{$row['unit']}' data-rate='{$row['rate_numeric']}'>{$row['item_no']} - {$row['category']}</option>";
+                }
+              } catch (PDOException $e) {
+                echo "<option value=''>Error loading items: " . htmlspecialchars($e->getMessage()) . "</option>";
+              }
+              ?>
+            </select>
+          </div>
+          <div class="col-12 col-md-3">
+            <label class="form-label">Description</label>
+            <input type="text" class="form-control item-description" name="items[${itemIndex}][description]" placeholder="Enter description" readonly>
+          </div>
+          <div class="col-12 col-md-2">
+            <label class="form-label">Quantity <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" name="items[${itemIndex}][quantity]" placeholder="Qty" min="1" required>
+          </div>
+          <div class="col-12 col-md-2">
+            <label class="form-label">Unit <span class="text-danger">*</span></label>
+            <input type="text" class="form-control item-unit" name="items[${itemIndex}][unit]" placeholder="Unit" readonly required>
+          </div>
+          <div class="col-12 col-md-2">
+            <label class="form-label">Rate <span class="text-danger">*</span></label>
+            <input type="number" class="form-control item-rate" name="items[${itemIndex}][rate]" step="0.01" placeholder="Rate" readonly required>
+          </div>
+          <div class="col-12 col-md-1 d-grid">
+            <button type="button" class="btn btn-danger btn-sm remove-item-btn">-</button>
+          </div>
+        `;
+        container.appendChild(newRow);
+
+        // Attach event listener to new select
+        newRow.querySelector('.item-select').addEventListener('change', () => updateItemFields(newRow.querySelector('.item-select')));
+
+        // Attach event listener to remove button
+        newRow.querySelector('.remove-item-btn').addEventListener('click', () => {
+          newRow.remove();
+        });
+
+        itemIndex++;
+      });
+
+      // Handle removing item rows
+      document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-item-btn')) {
+          e.target.closest('.item-row').remove();
+        }
+      });
+    });
+  </script>
+
 </body>
 
 </html>

@@ -13,12 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->beginTransaction();
 
         // Insert into work orders
-        $stmt = $pdo->prepare("INSERT INTO public.tbl_work_orders (contractor_name, cost, date_of_commencement, time_limit) VALUES (?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorders (contractor_name, cost, date_of_commencement, time_limit) VALUES (?, ?, ?, ?)");
         $stmt->execute([$contractor_name, $cost, $date_of_commencement, $time_limit]);
         $work_order_id = $pdo->lastInsertId();
 
         // Insert items
-        $stmt = $pdo->prepare("INSERT INTO public.tbl_work_order_items (work_order_id, item_name, description, quantity, unit, rate) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO public.tbl_workorder_items (work_order_id, item_name, description, quantity, unit, rate) VALUES (?, ?, ?, ?, ?, ?)");
 
         foreach ($items as $item) {
             $stmt->execute([
