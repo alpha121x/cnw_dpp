@@ -94,7 +94,6 @@ if (isset($_SESSION['success'])) {
                         <th>Date of Commencement</th>
                         <th>Name of Contractor</th>
                         <th>Status</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -110,9 +109,6 @@ if (isset($_SESSION['success'])) {
                                 <option value="true" <?php echo $order['is_issued'] ? 'selected' : ''; ?>>Issued</option>
                                 <option value="false" <?php echo !$order['is_issued'] ? 'selected' : ''; ?>>Not Issued</option>
                               </select>
-                            </td>
-                            <td>
-                              <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
                             </td>
                           </tr>
                         <?php endforeach; ?>
@@ -177,7 +173,6 @@ if (isset($_SESSION['success'])) {
                         <th>Date of Commencement</th>
                         <th>Name of Contractor</th>
                         <th>Status</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -190,10 +185,7 @@ if (isset($_SESSION['success'])) {
                               <td>WO-<?php echo sprintf('%03d', $order['id']); ?></td>
                               <td><?php echo htmlspecialchars($order['date_of_commencement']); ?></td>
                               <td><?php echo htmlspecialchars($order['contractor_name']); ?></td>
-                              <td><span class="badge bg-warning text-dark ms-2">Not Issued</span></td>
-                              <td>
-                                <a href="assets/dummy_files/files.pdf" target="_blank" class="badge bg-primary ms-2 text-white text-decoration-none">View Pdf</a>
-                              </td>
+                              <td><span class="badge bg-warning text-dark ms-2">Not Issued</span></td>    
                             </tr>
                           <?php endif; ?>
                         <?php endforeach; ?>
