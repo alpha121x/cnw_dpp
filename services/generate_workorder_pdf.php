@@ -1,5 +1,8 @@
 <?php
 require_once 'db_config.php';
+require_once '../vendor/autoload.php'; // Include Composer autoloader for DOMPDF
+
+use Dompdf\Dompdf;
 
 header('Content-Type: application/pdf');
 header('Content-Disposition: attachment; filename="work_order_' . $_POST['work_order_id'] . '.pdf"');
@@ -22,26 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['work_order_id'])) {
         $itemStmt->execute([$work_order_id]);
         $items = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Generate PDF using a library like TCPDF or FPDF (example assumes TCPDF is installed)
-        require_once 'tcpdf/tcpdf.php';
-
-        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-        $pdf->SetCreator('C&W DPP');
-        $pdf->SetTitle('Work Order #' . $work_order_id);
-        $pdf->AddPage();
-
+        // Generate HTML content
         $html = '<h1>Work Order #' . htmlspecialchars($work_order_id) . '</h1>';
         $html .= '<p><strong>Contractor:</strong> ' . htmlspecialchars($work_order['contractor_name']) . '</p>';
         $html .= '<p><strong>Date of Commencement:</strong> ' . htmlspecialchars($work_order['date_of_commencement']) . '</p>';
         $html .= '<p><strong>Cost:</strong> ' . htmlspecialchars($work_order['cost']) . '</p>';
-        $html .= '<h2>Items</h2><table border="1"><tr><th>Item No.</th><th>Description</th><th>Quantity</th></tr>';
+        $html .= '<h2>Items</h2><table border="1" style="border-collapse: collapse; width: 100%;"><tr><th>Item No.</th><th>Description</th><th>Quantity</th></tr>';
         foreach ($items as $item) {
             $html .= '<tr><td>' . htmlspecialchars($item['item_no']) . '</td><td>' . htmlspecialchars($item['description']) . '</td><td>' . htmlspecialchars($item['quantity']) . '</td></tr>';
         }
         $html .= '</table>';
 
-        $pdf->writeHTML($html, true, false, true, false, '');
-        $pdf->Output('work_order_' . $work_order_id . '.pdf', 'D');
+        // Initialize DOMPDF
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Output the generated PDF
+        $dompdf->stream('work_order_' . $work_order_id . '.pdf', ['Attachment' => true]);
         exit();
 
     } catch (PDOException $e) {
