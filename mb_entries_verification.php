@@ -150,7 +150,7 @@ $mb_entries = $dummy_data;
                             View 
                           </button>
 
-                          <a href="services/generate_pdf.php?id=<?php echo $entry['id']; ?>" class="text-decoration-none" target="_blank">
+                          <a href="services/generate_mb_pdf.php?id=<?php echo $entry['id']; ?>" class="text-decoration-none" target="_blank">
                             <span class="badge bg-primary me-1">Download</span>
                           </a>
                           <label class="badge bg-warning mb-0" style="cursor: pointer;">
