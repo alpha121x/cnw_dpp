@@ -15,6 +15,11 @@ try {
         FROM public.tbl_workorders
     ");
   $work_orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  // Calculate counts
+  $total_count = count($work_orders);
+  $issued_count = count(array_filter($work_orders, fn($order) => $order['is_issued']));
+  $not_issued_count = $total_count - $issued_count;
 } catch (PDOException $e) {
   $_SESSION['error'] = "Error fetching work orders: " . $e->getMessage();
 }
@@ -50,6 +55,35 @@ if (isset($_SESSION['success'])) {
 
     <section class="section dashboard">
       <div class="row">
+        <!-- Cards -->
+        <div class="col-12">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div class="card" style="background-color: #6c757d; color: white;">
+                <div class="card-body">
+                  <h5 class="card-title">Total Work Orders</h5>
+                  <h3 class="card-text"><?php echo $total_count; ?></h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card" style="background-color: #28a745; color: white;">
+                <div class="card-body">
+                  <h5 class="card-title">Issued Work Orders</h5>
+                  <h3 class="card-text"><?php echo $issued_count; ?></h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card" style="background-color: #ffc107; color: black;">
+                <div class="card-body">
+                  <h5 class="card-title">Not Issued Work Orders</h5>
+                  <h3 class="card-text"><?php echo $not_issued_count; ?></h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="col-12">
           <div class="card">
             <div class="card-body">
