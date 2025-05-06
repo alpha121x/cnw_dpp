@@ -38,6 +38,66 @@ $(document).ready(function () {
   });
 });
 
+
+document.addEventListener("DOMContentLoaded", function() {
+  // Handle issuance status update
+  document.querySelectorAll('.issuance-select').forEach(select => {
+    if (!select.disabled) { // Only add event listener to non-disabled selects
+      select.addEventListener('change', function() {
+        const workOrderId = this.getAttribute('data-work-order-id');
+        const isIssued = this.value === 'true';
+
+        fetch('services/update_workorder_issuance.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `work_order_id=${workOrderId}&is_issued=${isIssued}`
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const toastEl = document.getElementById("successToast");
+              const toastBody = document.getElementById("successToastMessage");
+              toastBody.textContent = "Issuance status updated successfully.";
+              const toast = new bootstrap.Toast(toastEl);
+              toast.show();
+
+              // Disable the dropdown after successful update
+              this.disabled = true;
+
+              // Update the UI to reflect the new status (optional, since reload will handle it)
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              const toastEl = document.getElementById("errorToast");
+              const toastBody = document.getElementById("errorToastMessage");
+              toastBody.textContent = data.error || "Failed to update issuance status.";
+              const toast = new bootstrap.Toast(toastEl);
+              toast.show();
+
+              // Revert to original value if update fails
+              this.value = !isIssued ? 'true' : 'false';
+            }
+          })
+          .catch(error => {
+            const toastEl = document.getElementById("errorToast");
+            const toastBody = document.getElementById("errorToastMessage");
+            toastBody.textContent = "Error updating issuance status: " + error.message;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Revert to original value if update fails
+            this.value = !isIssued ? 'true' : 'false';
+          });
+      });
+    }
+  });
+});
+
+
+
+
+
 $(document).ready(function() {
   // Initialize DataTables
   try {
