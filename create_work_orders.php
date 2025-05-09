@@ -107,7 +107,7 @@
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control" name="items[0][quantity]" placeholder="Qty" min="1" required>
+                     <input type="number" class="form-control" name="items[0][quantity]" placeholder="Qty" min="0.01" step="any" required>
                     </div>
                     <div class="col-12 col-md-2">
                       <label class="form-label">Unit <span class="text-danger">*</span></label>
@@ -236,14 +236,13 @@
           <option value="">Select Item</option>
         </select>
       </div>
-      input type="hidden" class="form-control item-description" name="items[${itemIndex}][item_no]">
       <div class="col-12 col-md-3">
         <label class="form-label">Description</label>
         <input type="text" class="form-control item-description" name="items[${itemIndex}][description]" placeholder="Enter description" readonly>
       </div>
       <div class="col-12 col-md-2">
         <label class="form-label">Quantity <span class="text-danger">*</span></label>
-        <input type="number" class="form-control" name="items[${itemIndex}][quantity]" placeholder="Qty" min="1" required>
+        <input type="number" class="form-control" name="items[${itemIndex}][quantity]" placeholder="Qty" min="0.01" step="any" required>
       </div>
       <div class="col-12 col-md-2">
         <label class="form-label">Unit <span class="text-danger">*</span></label>
