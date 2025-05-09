@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO public.tbl_workorder_qty (workorder_id, item_id, quantity) VALUES (?, ?, ?)");
 
         foreach ($items as $item) {
-            // Fetch item_no from tbl_workorder_items using the item id
-            $itemStmt = $pdo->prepare("SELECT item_no FROM public.tbl_workorder_items WHERE id = ?");
+            // Fetch item_id from tbl_workorder_items using the item id
+            $itemStmt = $pdo->prepare("SELECT id FROM public.tbl_workorder_items WHERE id = ?");
             $itemStmt->execute([$item['id']]);
             $item_no = $itemStmt->fetchColumn();
 
