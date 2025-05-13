@@ -18,7 +18,7 @@
 
   <?php include 'includes/side-bar.php'; ?>
 
-  <main id="main" class="main">
+  <main id="main" class="main" style="margin-top: 50px;">
 
     <section class="section dashboard">
       <div class="row">
@@ -26,8 +26,8 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Create Work Orders</h5>
-              <form action="services/work_order_creation.php" method="POST" class="row g-3 g-md-4">
-                <div class="row gy-3 gy-md-4">
+              <form action="services/work_order_creation.php" method="POST" class="row g-2 g-md-4">
+                <div class="row gy-2 gy-md-4">
                   <div class="col-12 col-md-6">
                     <label for="cont_name" class="form-label">Contractor Name <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" name="cont_name" id="cont_name" placeholder="Enter Contractor Name" required>
@@ -68,69 +68,68 @@
                     <label for="amount_words" class="form-label">Amount (Words)</label>
                     <input type="text" class="form-control" name="amount_words" id="amount_words" placeholder="Enter amount in words">
                   </div>
-                  <div class="col-12 col-md-6">
+                  <div class="col-12 col-md-12">
                     <label for="subject" class="form-label">Subject</label>
                     <input type="text" class="form-control" name="subject" id="subject" placeholder="Enter subject">
                   </div>
                 </div>
 
                 <h6 class="mt-4">Items</h6>
-                <div id="items-container">
-                  <div class="item-row row gy-2 gy-md-3 mb-3 align-items-end">
-                    <div class="col-12 col-md-2">
-                      <label class="form-label">Category <span class="text-danger">*</span></label>
-                      <select class="form-control category-select" name="items[0][category]" required>
-                        <option value="">Select Category</option>
-                        <?php
-                        include 'services/db_config.php';
-                        try {
-                          $query = "SELECT DISTINCT category FROM public.tbl_workorder_items";
-                          $stmt = $pdo->query($query);
-                          while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            echo "<option value='{$row['category']}'>{$row['category']}</option>";
-                          }
-                        } catch (PDOException $e) {
-                          echo "<option value=''>Error loading categories: " . htmlspecialchars($e->getMessage()) . "</option>";
-                        }
-                        ?>
-                      </select>
+                <div id="items-container" style="margin-top: 10px;">
+                    <div class="item-row d-flex align-items-end gap-2 mb-3 flex-wrap border-top pt-3 border-bottom pb-3">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Category <span class="text-danger">*</span></label>
+                            <select class="form-control category-select" name="items[0][category]" required>
+                                <option value="">Select Category</option>
+                                <?php
+                                include 'services/db_config.php';
+                                try {
+                                    $query = "SELECT DISTINCT category FROM public.tbl_workorder_items";
+                                    $stmt = $pdo->query($query);
+                                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                        echo "<option value='{$row['category']}'>{$row['category']}</option>";
+                                    }
+                                } catch (PDOException $e) {
+                                    echo "<option value=''>Error loading categories: " . htmlspecialchars($e->getMessage()) . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Item No. <span class="text-danger">*</span></label>
+                            <select class="form-control item-select" name="items[0][id]" required disabled>
+                                <option value="">Select Item</option>
+                            </select>
+                        </div>
+                        <div style="flex: 2; min-width: 200px;">
+                            <label class="form-label">Description</label>
+                            <input type="text" class="form-control item-description" name="items[0][description]" placeholder="Enter description" readonly>
+                        </div>
+                        <div style="flex: 1; min-width: 100px;">
+                            <label class="form-label">Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="items[0][quantity]" placeholder="Qty" min="0.01" step="any" required>
+                        </div>
+                        <div style="flex: 1; min-width: 100px;">
+                            <label class="form-label">Unit <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control item-unit" name="items[0][unit]" placeholder="Unit" readonly required>
+                        </div>
+                        <div style="flex: 1; min-width: 100px;">
+                            <label class="form-label">Rate <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control item-rate" name="items[0][rate]" step="0.01" placeholder="Rate" readonly required>
+                        </div>
+                        <div style="min-width: 50px;">
+                            <button type="button" class="btn btn-secondary add-item-btn w-100">+</button>
+                        </div>
                     </div>
-                    <div class="col-12 col-md-2">
-                      <label class="form-label">Item No. <span class="text-danger">*</span></label>
-                      <select class="form-control item-select" name="items[0][id]" required disabled>
-                        <option value="">Select Item</option>
-                      </select>
-                    </div>
-                    <div class="col-12 col-md-3">
-                      <label class="form-label">Description</label>
-                      <input type="text" class="form-control item-description" name="items[0][description]" placeholder="Enter description" readonly>
-                    </div>
-                    <div class="col-12 col-md-2">
-                      <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                     <input type="number" class="form-control" name="items[0][quantity]" placeholder="Qty" min="0.01" step="any" required>
-                    </div>
-                    <div class="col-12 col-md-2">
-                      <label class="form-label">Unit <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control item-unit" name="items[0][unit]" placeholder="Unit" readonly required>
-                    </div>
-                    <div class="col-12 col-md-2">
-                      <label class="form-label">Rate <span class="text-danger">*</span></label>
-                      <input type="number" class="form-control item-rate" name="items[0][rate]" step="0.01" placeholder="Rate" readonly required>
-                    </div>
-                    <div class="col-12 col-md-1 d-grid">
-                      <button type="button" class="btn btn-secondary btn-sm add-item-btn">+</button>
-                    </div>
-                  </div>
                 </div>
 
                 <div class="col-12">
-                  <div class="d-grid">
+                  <div class="d-flex justify-content-end">
                     <button class="btn btn-primary" type="submit">Create Work Order</button>
                   </div>
                 </div>
               </form>
             </div>
-          </div>
         </div>
       </div>
     </section>

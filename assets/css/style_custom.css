@@ -1,0 +1,230 @@
+/* Sidebar Nav Links */
+.sidebar-nav .nav-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e8e8e8;
+    background: #3A5FA1;
+    padding: 7px 15px;
+    transition: all 0.3s ease; /* Smooth transition for hover and active */
+}
+
+/* Sidebar Nav Link Icons */
+.sidebar-nav .nav-link i {
+    color: #e8e8e8;
+}
+
+/* Hover Effect for Nav Links */
+.sidebar-nav .nav-link:hover {
+    color: #f6f9ff;
+    background: #216545;
+}
+
+/* Hover Effect for Nav Link Icons */
+.sidebar-nav .nav-link:hover i {
+    color: #f6f9ff;
+}
+
+/* Active State for Nav Links */
+.sidebar-nav .nav-link.active {
+    color: #f6f9ff;
+    background: #216545;
+}
+
+/* Active State for Nav Link Icons */
+.sidebar-nav .nav-link.active i {
+    color: #f6f9ff;
+}
+
+/* Logo Styling */
+.logo img {
+    max-height: 45px;
+    margin-right: 6px;
+    transition: all 0.3s ease; /* Smooth transition for hover */
+}
+
+/* Hover Effect for Logo */
+.logo:hover img {
+    opacity: 0.8; /* Example hover effect: reduce opacity */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Toggle Sidebar Button */
+.header .toggle-sidebar-btn {
+    padding-left: 0;
+}
+
+/* Main Content */
+#main {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+/*----------------------------------------------------------*/
+
+
+/* Custom Info Cards */
+.custom-info-card {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+/* Hover Effect for Cards */
+.custom-info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Flat Colors */
+.custom-info-card.work-order-creation {
+    background: #584b53;
+    color: #ffffff;
+}
+
+.custom-info-card.work-order-issuance {
+    background: #0077b6;
+    color: #ffffff;
+}
+
+.custom-info-card.mb-verification {
+    background: #5d0ec0;
+    color: #ffffff;
+}
+
+.custom-info-card.payment-bill {
+    background: #43aa8b;
+    color: #ffffff;
+}
+
+/* Card Body */
+.custom-info-card .card-body {
+    padding: 15px;
+}
+
+/* Card Title */
+.custom-info-card .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Card Icon */
+.custom-info-card .card-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 24px;
+}
+
+/* Card Icon Colors */
+.work-order-creation .card-icon i {
+    color: #584b53;
+}
+
+.work-order-issuance .card-icon i {
+    color: #0077b6;
+}
+
+.mb-verification .card-icon i {
+    color: #5d0ec0;
+}
+
+.payment-bill .card-icon i {
+    color: #43aa8b;
+}
+
+/* Card Text */
+.custom-info-card p {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.9;
+}
+
+/*-----------------------------------------------------------------*/
+input[type='text'],input[type='number'],input[type='date']{
+    background-color: #ececec;
+    border-radius: 2px;
+}
+.category-select {
+    background-color: #ececec !important;
+    border-radius: 2px !important;
+}
+
+.sidebar {
+    width: 280px;
+}
+
+@media (min-width: 1200px) {
+    #main, #footer {
+        margin-left: 280px;
+    }
+}
+
+
+
+.custom-work-card {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    background-color: transparent; /* Background set in specific classes */
+}
+.custom-work-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+.custom-work-card-body {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem; /* Matches original card-body padding */
+    color: white;
+}
+.custom-work-card-icon {
+    font-size: 2.5rem;
+    margin-right: 1.5rem;
+    opacity: 0.9;
+}
+.custom-work-card-content {
+    flex-grow: 1;
+}
+.custom-work-card-title {
+    font-size: 1.25rem; /* Matches original h5 */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.custom-work-card-text {
+    font-size: 2.25rem; /* Matches original h3 */
+    font-weight: 700;
+    margin: 0;
+}
+/* Background Colors */
+.custom-work-card-total {
+    background-color: #0077B6;
+}
+.custom-work-card-issued {
+    background-color: #5D0EC0;
+}
+.custom-work-card-not-issued {
+    background-color: #43AA8B;
+}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .custom-work-card-body {
+        padding: 1rem;
+    }
+    .custom-work-card-icon {
+        font-size: 2rem;
+        margin-right: 1rem;
+    }
+    .custom-work-card-text {
+        font-size: 1.75rem;
+    }
+    .custom-work-card-title {
+        font-size: 1rem;
+    }
+}
+
+

@@ -53,7 +53,7 @@
                             <div class="col-12 col-md-6">
                                 <div class="d-flex align-items-center justify-content-center h-100">
                                     <div class="col-10 col-xl-8 pb-3 pt-3 text-center">
-                                        <img class="img-fluid rounded mb-4" loading="lazy" src="./assets/img/cnw_logo.png" width="245" height="80" alt="BootstrapBrain Logo">
+                                        <img class="img-fluid rounded mb-2" loading="lazy" src="./assets/img/cnw_dpp_logo.png" width="245" height="80" alt="BootstrapBrain Logo">
                                         <hr class="border-primary-subtle mb-4">
                                         <h4 class="mb-4">Digitization of Payment Procedures</h4>
                                         <p class="m-0">We write words, take photos, make videos, and interact with artificial intelligence.</p>
