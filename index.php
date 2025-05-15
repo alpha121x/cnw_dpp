@@ -76,7 +76,7 @@ require_once 'auth.php';
                 </div>
             <?php endif; ?>
 
-            <?php if ($role_id == 1 || $role_id == 2): // Admin or Sub Engineer ?>
+            <?php if ($role_id == 2): // Admin or Sub Engineer ?>
                 <!-- MB Entries Verification Card -->
                 <div class="col-lg-3 col-md-6">
                     <div class="card custom-info-card mb-verification">
@@ -95,7 +95,7 @@ require_once 'auth.php';
                 </div>
             <?php endif; ?>
 
-            <?php if ($role_id == 1 || $role_id == 4): // Admin or Contractor ?>
+            <?php if ($role_id == 4): // Admin or Contractor ?>
                 <!-- Interim Payment Bill Submission Card -->
                 <div class="col-lg-3 col-md-6">
                     <div class="card custom-info-card payment-bill">

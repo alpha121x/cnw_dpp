@@ -15,14 +15,14 @@
     </li><!-- End Dashboard Nav -->
 
     <?php if ($role_id == 1): // Admin ?>
-      <li class="nav-item">
-        <a class="nav-link" href="create_work_orders.php">
-          <i class="bi bi-boxes"></i><span>Create Work Orders</span>
+       <li class="nav-item">
+        <a class="nav-link" href="work_orders_issuance.php">
+          <i class="bi bi-boxes"></i><span>Work Orders Issuance</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="work_orders_issuance.php">
-          <i class="bi bi-boxes"></i><span>Work Orders Issuance</span>
+        <a class="nav-link" href="create_work_orders.php">
+          <i class="bi bi-boxes"></i><span>Create Work Orders</span>
         </a>
       </li>
     <?php endif; ?>
