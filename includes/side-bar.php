@@ -7,12 +7,13 @@
 
   <ul class="sidebar-nav" id="sidebar-nav">
 
-    <li class="nav-item">
+    <!-- <li class="nav-item">
       <a class="nav-link " href="index.php">
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </a>
-    </li><!-- End Dashboard Nav -->
+    </li> -->
+    <!-- End Dashboard Nav -->
 
     <?php if ($role_id == 1): // Admin ?>
        <li class="nav-item">
