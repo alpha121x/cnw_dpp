@@ -144,7 +144,7 @@ if (isset($_SESSION['success'])) {
                                         </td>
                                         <td>
                                             <a href="#"
-                                               class="badge bg-primary ms-2 text-white text-decoration-none generate-pdf <?php echo $order['is_issued'] ? '' : 'disabled'; ?>"
+                                               class="badge bg-primary ms-2 text-white text-decoration-none generate-pdf"
                                                data-work-order-id="<?php echo $order['id']; ?>">
                                                 View Pdf
                                             </a>
