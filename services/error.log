@@ -1,7 +1,9 @@
-[06-May-2025 13:43:29 Europe/Berlin] Generating PDF for Measurement Book ID: 1
-[2025-05-09 12:25:51] Error creating work order for contractor: Alfreda Chase. Work Order ID: N/A. Error: SQLSTATE[42703]: Undefined column: 7 ERROR:  column "cost" of relation "tbl_workorders" does not exist
-LINE 1: ...SERT INTO public.tbl_workorders (contractor_name, cost, date...
-                                                             ^
-[2025-05-09 12:28:00] Error creating work order for contractor: Keely Horton. Work Order ID: N/A. Error: SQLSTATE[42703]: Undefined column: 7 ERROR:  column "cost" of relation "tbl_workorders" does not exist
-LINE 1: ...SERT INTO public.tbl_workorders (contractor_name, cost, date...
-                                                             ^
+[15-May-2025 09:55:12 Europe/Berlin] Login script started at 2025-05-15 09:55:12
+[15-May-2025 09:55:12 Europe/Berlin] User found: Array
+(
+    [username] => admin
+    [is_active] => 1
+    [role_id] => 1
+)
+
+[15-May-2025 09:55:12 Europe/Berlin] Login successful for username: admin, role_id: 1
