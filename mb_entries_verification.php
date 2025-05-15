@@ -142,14 +142,6 @@ $mb_entries = $dummy_data;
                           </button>
                         </td>
                         <td>
-                          <button type="button"
-                            class="badge bg-success border-0 view-report-btn"
-                            data-id="<?php echo $entry['id']; ?>"
-                            data-bs-toggle="modal"
-                            data-bs-target="#reportsModal">
-                            View 
-                          </button>
-
                           <a href="services/generate_mb_pdf.php?id=<?php echo $entry['id']; ?>" class="text-decoration-none" target="_blank">
                             <span class="badge bg-primary me-1">Download</span>
                           </a>
@@ -176,32 +168,6 @@ $mb_entries = $dummy_data;
                               <p><strong>DB Entry Date/Time:</strong> <?php echo htmlspecialchars($entry['db_date_time']); ?></p>
                               <p><strong>Measurement Values:</strong> <?php echo htmlspecialchars($entry['measurement_values']); ?></p>
                               <p><strong>Unit:</strong> <?php echo htmlspecialchars($units[$entry['unit_id']]); ?></p>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Shared Details Modal -->
-                      <div class="modal fade" id="reportsModal" tabindex="-1" aria-labelledby="reportsModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="detailsModalLabel">MB Entry Report</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <p><strong>Name:</strong> <span id="modalName"></span></p>
-                              <p><strong>Authority:</strong> <span id="modalAuthority"></span></p>
-                              <p><strong>Commencement:</strong> <span id="modalComm"></span></p>
-                              <p><strong>Completion:</strong> <span id="modalComp"></span></p>
-                              <p><strong>Measurement Date:</strong> <span id="modalMeasureDate"></span></p>
-                              <p><strong>DB Entry Date:</strong> <span id="modalDBDate"></span></p>
-                              <p><strong>Values:</strong> <span id="modalValues"></span></p>
-                              <p><strong>Total:</strong> <span id="modalTotal"></span></p>
-                              <p><strong>Unit:</strong> <span id="modalUnit"></span></p>
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
