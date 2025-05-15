@@ -30,18 +30,31 @@
   $boqItems = [];
   try {
     // Fetch from tbl_workorders
-    $stmt = $pdo->prepare("SELECT id, cost, date_of_commencement, time_limit_months, created_at, contractor_id, contractor_name, ref_no, ref_date, se_ref_no, se_ref_date, amount_numeric, amount_words, is_issued, subject FROM public.tbl_workorders WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, cost, date_of_commencement, time_limit_months, created_at, contractor_id, contractor_name, ref_no, ref_date, se_ref_no, se_ref_date, amount_numeric, amount_words, is_issued, subject 
+                           FROM public.tbl_workorders 
+                           WHERE id = ?");
     $stmt->execute([$workOrderId]);
     $workOrder = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Fetch BOQ items from tbl_workorder_qty
-    $stmt = $pdo->prepare("SELECT id, workorder_id, item_id, quantity FROM public.tbl_workorder_qty WHERE workorder_id = ?");
+    // Fetch BOQ items with deduplicated tbl_workorder_items (select row with highest id)
+    $stmt = $pdo->prepare("SELECT qty.id, qty.workorder_id, qty.item_id, qty.quantity,
+                                  items.description, items.unit, items.rate_numeric
+                           FROM public.tbl_workorder_qty qty
+                           LEFT JOIN (
+                               SELECT item_no, description, unit, rate_numeric
+                               FROM public.tbl_workorder_items
+                               WHERE (item_no, id) IN (
+                                   SELECT item_no, MAX(id)
+                                   FROM public.tbl_workorder_items
+                                   GROUP BY item_no
+                               )
+                           ) items ON qty.item_id = items.item_no
+                           WHERE qty.workorder_id = ?");
     $stmt->execute([$workOrderId]);
     $boqItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Placeholder: Fetch item details (description, unit, rate) from a tbl_items table
-    // This requires a join or separate query; adjust based on your schema
-    // For now, I'll assume these are fetched dynamically via JavaScript or pre-loaded
+    // Debug: Log the fetched BOQ items
+    error_log("BOQ items fetched for workorder_id: $workOrderId, count: " . count($boqItems));
   } catch (PDOException $e) {
     error_log("Database error: " . $e->getMessage());
     $workOrder = [];
@@ -98,30 +111,34 @@
                   <div class="col-12 mt-4">
                     <h6>BOQ Items</h6>
                     <div id="items-container">
-                      <?php foreach ($boqItems as $index => $item): ?>
-                        <div class="d-flex align-items-end gap-2 mb-2 item-row">
-                          <div style="flex: 1; min-width: 150px;">
-                            <label class="form-label">Item No. <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="items[<?php echo $index; ?>][id]" value="<?php echo htmlspecialchars($item['item_id']); ?>" readonly required>
+                      <?php if (empty($boqItems)): ?>
+                        <p>No BOQ items found for this work order.</p>
+                      <?php else: ?>
+                        <?php foreach ($boqItems as $index => $item): ?>
+                          <div class="d-flex align-items-end gap-2 mb-2 item-row">
+                            <div style="flex: 1; min-width: 150px;">
+                              <label class="form-label">Item No. <span class="text-danger">*</span></label>
+                              <input type="text" class="form-control" name="items[<?php echo $index; ?>][id]" value="<?php echo htmlspecialchars($item['item_id']); ?>" readonly required>
+                            </div>
+                            <div style="flex: 2; min-width: 200px;">
+                              <label class="form-label">Description</label>
+                              <input type="text" class="form-control item-description" name="items[<?php echo $index; ?>][description]" value="<?php echo htmlspecialchars($item['description'] ?? ''); ?>" readonly>
+                            </div>
+                            <div style="flex: 1; min-width: 100px;">
+                              <label class="form-label">Quantity <span class="text-danger">*</span></label>
+                              <input type="number" class="form-control" name="items[<?php echo $index; ?>][quantity]" value="<?php echo htmlspecialchars($item['quantity']); ?>" readonly required>
+                            </div>
+                            <div style="flex: 1; min-width: 100px;">
+                              <label class="form-label">Unit <span class="text-danger">*</span></label>
+                              <input type="text" class="form-control item-unit" name="items[<?php echo $index; ?>][unit]" value="<?php echo htmlspecialchars($item['unit'] ?? ''); ?>" readonly required>
+                            </div>
+                            <div style="flex: 1; min-width: 100px;">
+                              <label class="form-label">Rate <span class="text-danger">*</span></label>
+                              <input type="number" class="form-control item-rate" name="items[<?php echo $index; ?>][rate]" step="0.01" value="<?php echo htmlspecialchars($item['rate_numeric'] ?? ''); ?>" readonly required>
+                            </div>
                           </div>
-                          <div style="flex: 2; min-width: 200px;">
-                            <label class="form-label">Description</label>
-                            <input type="text" class="form-control item-description" name="items[<?php echo $index; ?>][description]" placeholder="Enter description" value="" readonly>
-                          </div>
-                          <div style="flex: 1; min-width: 100px;">
-                            <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" name="items[<?php echo $index; ?>][quantity]" value="<?php echo htmlspecialchars($item['quantity']); ?>" readonly required>
-                          </div>
-                          <div style="flex: 1; min-width: 100px;">
-                            <label class="form-label">Unit <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control item-unit" name="items[<?php echo $index; ?>][unit]" placeholder="Unit" value="" readonly required>
-                          </div>
-                          <div style="flex: 1; min-width: 100px;">
-                            <label class="form-label">Rate <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control item-rate" name="items[<?php echo $index; ?>][rate]" step="0.01" placeholder="Rate" value="" readonly required>
-                          </div>
-                        </div>
-                      <?php endforeach; ?>
+                        <?php endforeach; ?>
+                      <?php endif; ?>
                     </div>
                   </div>
 
@@ -144,32 +161,5 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <?php include 'includes/footer-src-files.php'; ?>
-
-  <!-- JavaScript to Fetch Item Details (Placeholder) -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      document.querySelectorAll('.item-row').forEach(row => {
-        const itemIdInput = row.querySelector('[name^="items"][name$="[id]"]');
-        const descriptionInput = row.querySelector('.item-description');
-        const unitInput = row.querySelector('.item-unit');
-        const rateInput = row.querySelector('.item-rate');
-        const itemId = itemIdInput.value;
-
-        if (itemId) {
-          // Placeholder: Fetch item details via AJAX
-          fetch(`get_item_details.php?id=${itemId}`)
-            .then(response => response.json())
-            .then(data => {
-              if (data.success) {
-                descriptionInput.value = data.description || '';
-                unitInput.value = data.unit || '';
-                rateInput.value = data.rate || '';
-              }
-            })
-            .catch(error => console.error('Error fetching item details:', error));
-        }
-      });
-    });
-  </script>
 </body>
 </html>

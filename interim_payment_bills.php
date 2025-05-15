@@ -13,9 +13,10 @@
 </head>
 
 <body>
+
   <?php
   session_start();
-  require_once 'services/db_config.php';
+  require_once 'services/db_config.php'; // Include database configuration
 
   // Check if user is logged in
   if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
@@ -23,38 +24,22 @@
     exit();
   }
 
-  $workOrderId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+  // Combine first_name and last_name to match contractor_name
+  $contractorFullName = trim($_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name']);
 
-  // Fetch work order details
-  $workOrder = [];
-  $boqItems = [];
   try {
-    // Fetch from tbl_workorders
+    // Query to fetch work orders where contractor_name matches the logged-in user's full name
     $stmt = $pdo->prepare("SELECT id, cost, date_of_commencement, time_limit_months, created_at, contractor_id, contractor_name, ref_no, ref_date, se_ref_no, se_ref_date, amount_numeric, amount_words, is_issued, subject 
                            FROM public.tbl_workorders 
-                           WHERE id = ?");
-    $stmt->execute([$workOrderId]);
-    $workOrder = $stmt->fetch(PDO::FETCH_ASSOC);
+                           WHERE contractor_name = ?");
+    $stmt->execute([$contractorFullName]);
+    $workOrders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Fetch BOQ items from tbl_workorder_qty with details from tbl_workorder_items
-    $stmt = $pdo->prepare("SELECT qty.id, qty.workorder_id, qty.item_id, qty.quantity, 
-                                  items.description, items.unit, items.rate_numeric 
-                           FROM public.tbl_workorder_qty qty
-                           LEFT JOIN public.tbl_workorder_items items ON qty.item_id = items.id
-                           WHERE qty.workorder_id = ?");
-    $stmt->execute([$workOrderId]);
-    $boqItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Debug: Log the fetched BOQ items
-    error_log("BOQ items fetched for workorder_id: $workOrderId, count: " . count($boqItems));
+    // Debug: Log the query result
+    error_log("Work orders fetched for contractor: $contractorFullName, count: " . count($workOrders));
   } catch (PDOException $e) {
     error_log("Database error: " . $e->getMessage());
-    $workOrder = [];
-    $boqItems = [];
-  }
-
-  if (empty($workOrder)) {
-    die("Work order not found.");
+    $workOrders = [];
   }
   ?>
 
@@ -63,89 +48,71 @@
   <?php include 'includes/side-bar.php'; ?>
 
   <main id="main" class="main">
+
     <section class="section dashboard">
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Apply Interim Payment Bill</h5>
+              <h5 class="card-title">Interim Payment Bills</h5>
 
-              <!-- Form -->
-              <form action="process_apply_bill.php" method="POST">
-                <input type="hidden" name="workorder_id" value="<?php echo htmlspecialchars($workOrder['id']); ?>">
-
-                <div class="row">
-                  <!-- Contractor Name (Read-only) -->
-                  <div class="col-12 col-md-6">
-                    <label for="contractor_name" class="form-label">Contractor Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="contractor_name" id="contractor_name" value="<?php echo htmlspecialchars($workOrder['contractor_name']); ?>" readonly required>
-                  </div>
-
-                  <!-- Subject (Read-only) -->
-                  <div class="col-12 col-md-6">
-                    <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="subject" id="subject" value="<?php echo htmlspecialchars($workOrder['subject']); ?>" readonly required>
-                  </div>
-
-                  <!-- Date of Commencement (Read-only) -->
-                  <div class="col-12 col-md-6">
-                    <label for="date_of_commencement" class="form-label">Date of Commencement <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" name="date_of_commencement" id="date_of_commencement" value="<?php echo htmlspecialchars($workOrder['date_of_commencement']); ?>" readonly required>
-                  </div>
-
-                  <!-- Cost (Editable) -->
-                  <div class="col-12 col-md-6">
-                    <label for="cost" class="form-label">Cost <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="cost" id="cost" step="0.01" value="<?php echo htmlspecialchars($workOrder['cost'] ?? ''); ?>" placeholder="Enter Cost" required>
-                  </div>
-
-                  <!-- BOQ Items -->
-                  <div class="col-12 mt-4">
-                    <h6>BOQ Items</h6>
-                    <div id="items-container">
-                      <?php if (empty($boqItems)): ?>
-                        <p>No BOQ items found for this work order.</p>
-                      <?php else: ?>
-                        <?php foreach ($boqItems as $index => $item): ?>
-                          <div class="d-flex align-items-end gap-2 mb-2 item-row">
-                            <div style="flex: 1; min-width: 150px;">
-                              <label class="form-label">Item No. <span class="text-danger">*</span></label>
-                              <input type="text" class="form-control" name="items[<?php echo $index; ?>][id]" value="<?php echo htmlspecialchars($item['item_id']); ?>" readonly required>
+              <!-- Work Orders Table -->
+              <div class="table-responsive">
+                <!-- Single Table -->
+                <table class="table table-bordered table-striped mt-3" style="font-size: 14px">
+                  <thead class="table-primary">
+                    <tr>
+                      <th>Sr</th>
+                      <th>Work Order</th>
+                      <th>Date of Commencement</th>
+                      <th>Name of Contractor</th>
+                      <th>View Details</th>
+                      <th>Bill Status</th>
+                      <th>Action</th> <!-- Added Action column to thead -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php if (empty($workOrders)): ?>
+                      <tr>
+                        <td colspan="7" class="text-center">No work orders assigned to you.</td>
+                      </tr>
+                    <?php else: ?>
+                      <?php foreach ($workOrders as $index => $workOrder): ?>
+                        <tr>
+                          <td><?php echo $index + 1; ?></td>
+                          <td>WO-<?php echo sprintf('%03d', $workOrder['id']); ?></td>
+                          <td><?php echo htmlspecialchars($workOrder['date_of_commencement']); ?></td>
+                          <td><?php echo htmlspecialchars($workOrder['contractor_name']); ?></td>
+                          <td>
+                            <a href="#" class="badge bg-primary ms-2 text-white text-decoration-none generate-pdf" data-work-order-id="<?php echo $workOrder['id']; ?>">
+                              View Pdf
+                            </a>
+                          </td>
+                          <td>
+                            <div class="form-check form-switch">
+                              <input class="form-check-input issuance-switch" type="checkbox" id="issuanceSwitch-<?php echo $workOrder['id']; ?>" data-work-order-id="<?php echo $workOrder['id']; ?>" <?php echo $workOrder['is_issued'] ? 'checked' : ''; ?> <?php echo $workOrder['is_issued'] ? 'disabled' : ''; ?>>
+                              <label class="form-check-label" for="issuanceSwitch-<?php echo $workOrder['id']; ?>">
+                                <?php echo $workOrder['is_issued'] ? 'Applied' : 'Not Applied'; ?>
+                              </label>
                             </div>
-                            <div style="flex: 2; min-width: 200px;">
-                              <label class="form-label">Description</label>
-                              <input type="text" class="form-control item-description" name="items[<?php echo $index; ?>][description]" value="<?php echo htmlspecialchars($item['description'] ?? ''); ?>" readonly>
-                            </div>
-                            <div style="flex: 1; min-width: 100px;">
-                              <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                              <input type="number" class="form-control" name="items[<?php echo $index; ?>][quantity]" value="<?php echo htmlspecialchars($item['quantity']); ?>" readonly required>
-                            </div>
-                            <div style="flex: 1; min-width: 100px;">
-                              <label class="form-label">Unit <span class="text-danger">*</span></label>
-                              <input type="text" class="form-control item-unit" name="items[<?php echo $index; ?>][unit]" value="<?php echo htmlspecialchars($item['unit'] ?? ''); ?>" readonly required>
-                            </div>
-                            <div style="flex: 1; min-width: 100px;">
-                              <label class="form-label">Rate <span class="text-danger">*</span></label>
-                              <input type="number" class="form-control item-rate" name="items[<?php echo $index; ?>][rate]" step="0.01" value="<?php echo htmlspecialchars($item['rate_numeric'] ?? ''); ?>" readonly required>
-                            </div>
-                          </div>
-                        <?php endforeach; ?>
-                      <?php endif; ?>
-                    </div>
-                  </div>
-
-                  <!-- Submit Button -->
-                  <div class="col-12 mt-3">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                  </div>
-                </div>
-              </form>
-
+                          </td>
+                          <td>
+                            <a href="apply_bill_form.php?id=<?php  echo $workOrder['id'];  ?>" class="badge bg-success ms-2 text-white text-decoration-none generate-apple">
+                              Apply
+                            </a>
+                          </td>
+                        </tr>
+                      <?php endforeach; ?>
+                    <?php endif; ?>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </section>
+
   </main><!-- End #main -->
 
   <?php include 'includes/footer.php'; ?>
@@ -154,4 +121,5 @@
 
   <?php include 'includes/footer-src-files.php'; ?>
 </body>
+
 </html>
