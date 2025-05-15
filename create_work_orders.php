@@ -30,7 +30,28 @@
                 <div class="row gy-2 gy-md-4">
                   <div class="col-12 col-md-6">
                     <label for="cont_name" class="form-label">Contractor Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="cont_name" id="cont_name" placeholder="Enter Contractor Name" required>
+                    <?php
+                    // Include database configuration
+                    require_once 'services/db_config.php'; // Adjust path if needed
+
+                    try {
+                      // Fetch contractors from tbl_contractors
+                      $stmt = $pdo->prepare("SELECT * FROM public.tbl_contractors ORDER BY id ASC");
+                      $stmt->execute();
+                      $contractors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    } catch (PDOException $e) {
+                      error_log("Error fetching contractors: " . $e->getMessage());
+                      $contractors = [];
+                    }
+                    ?>
+                    <select class="form-control" name="cont_name" id="cont_name" required>
+                      <option value="" disabled selected>Select Contractor</option>
+                      <?php foreach ($contractors as $contractor): ?>
+                        <option value="<?php echo htmlspecialchars($contractor['id']); ?>">
+                          <?php echo htmlspecialchars($contractor['name']); ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
                   </div>
                   <div class="col-12 col-md-6">
                     <label for="cost" class="form-label">Total Cost <span class="text-danger">*</span></label>
