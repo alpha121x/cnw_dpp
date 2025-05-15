@@ -44,7 +44,7 @@ $short_name = htmlspecialchars(substr($_SESSION['user']['first_name'], 0, 1) . '
       <li class="nav-item dropdown pe-3">
         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
           <img src="<?php echo $profile_picture; ?>" alt="Profile" class="rounded-circle">
-          <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $short_name; ?></span>
+          <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $role_name; ?></span>
         </a><!-- End Profile Image Icon -->
 
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
