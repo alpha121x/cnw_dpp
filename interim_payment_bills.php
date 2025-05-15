@@ -58,47 +58,49 @@
 
               <!-- Work Orders Table -->
               <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                  <thead>
+                <!-- Single Table -->
+                <table class="table table-bordered table-striped mt-3" style="font-size: 14px">
+                  <thead class="table-primary">
                     <tr>
-                      <th>ID</th>
-                      <th>Cost</th>
+                      <th>Sr</th>
+                      <th>Work Order</th>
                       <th>Date of Commencement</th>
-                      <th>Time Limit (Months)</th>
-                      <th>Created At</th>
-                      <th>Contractor Name</th>
-                      <th>Reference No</th>
-                      <th>Reference Date</th>
-                      <th>SE Reference No</th>
-                      <th>SE Reference Date</th>
-                      <th>Amount (Numeric)</th>
-                      <th>Amount (Words)</th>
-                      <th>Is Issued</th>
-                      <th>Subject</th>
+                      <th>Name of Contractor</th>
+                      <th>View Details</th>
+                      <th>Bill Status</th>
+                      <th>Action</th> <!-- Added Action column to thead -->
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (empty($workOrders)): ?>
                       <tr>
-                        <td colspan="14" class="text-center">No work orders assigned to you.</td>
+                        <td colspan="7" class="text-center">No work orders assigned to you.</td>
                       </tr>
                     <?php else: ?>
-                      <?php foreach ($workOrders as $workOrder): ?>
+                      <?php foreach ($workOrders as $index => $workOrder): ?>
                         <tr>
-                          <td><?php echo htmlspecialchars($workOrder['id']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['cost']); ?></td>
+                          <td><?php echo $index + 1; ?></td>
+                          <td>WO-<?php echo sprintf('%03d', $workOrder['id']); ?></td>
                           <td><?php echo htmlspecialchars($workOrder['date_of_commencement']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['time_limit_months']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['created_at']); ?></td>
                           <td><?php echo htmlspecialchars($workOrder['contractor_name']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['ref_no']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['ref_date']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['se_ref_no']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['se_ref_date']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['amount_numeric']); ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['amount_words']); ?></td>
-                          <td><?php echo $workOrder['is_issued'] ? 'Yes' : 'No'; ?></td>
-                          <td><?php echo htmlspecialchars($workOrder['subject']); ?></td>
+                          <td>
+                            <a href="#" class="badge bg-primary ms-2 text-white text-decoration-none generate-pdf" data-work-order-id="<?php echo $workOrder['id']; ?>">
+                              View Pdf
+                            </a>
+                          </td>
+                          <td>
+                            <div class="form-check form-switch">
+                              <input class="form-check-input issuance-switch" type="checkbox" id="issuanceSwitch-<?php echo $workOrder['id']; ?>" data-work-order-id="<?php echo $workOrder['id']; ?>" <?php echo $workOrder['is_issued'] ? 'checked' : ''; ?> <?php echo $workOrder['is_issued'] ? 'disabled' : ''; ?>>
+                              <label class="form-check-label" for="issuanceSwitch-<?php echo $workOrder['id']; ?>">
+                                <?php echo $workOrder['is_issued'] ? 'Applied' : 'Not Applied'; ?>
+                              </label>
+                            </div>
+                          </td>
+                          <td>
+                            <a href="apply_bill_form.php" class="badge bg-success ms-2 text-white text-decoration-none generate-apple" data-work-order-id="<?php echo $workOrder['id']; ?>">
+                              Apply
+                            </a>
+                          </td>
                         </tr>
                       <?php endforeach; ?>
                     <?php endif; ?>
