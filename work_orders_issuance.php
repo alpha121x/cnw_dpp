@@ -62,7 +62,7 @@ if (isset($_SESSION['success'])) {
                         <i class="fas fa-clipboard-list custom-work-card-icon"></i>
                         <div class="custom-work-card-content">
                             <h5 class="custom-work-card-title">Total Work Orders</h5>
-                            <h3 class="custom-work-card-text">150</h3> <!-- Replace with <?php echo $total_count; ?> -->
+                            <h3 class="custom-work-card-text"><?php echo $total_count; ?></h3>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ if (isset($_SESSION['success'])) {
                         <i class="fas fa-check-circle custom-work-card-icon"></i>
                         <div class="custom-work-card-content">
                             <h5 class="custom-work-card-title">Issued Work Orders</h5>
-                            <h3 class="custom-work-card-text">120</h3> <!-- Replace with <?php echo $issued_count; ?> -->
+                            <h3 class="custom-work-card-text"><?php echo $issued_count; ?></h3>
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@ if (isset($_SESSION['success'])) {
                         <i class="fas fa-exclamation-circle custom-work-card-icon"></i>
                         <div class="custom-work-card-content">
                             <h5 class="custom-work-card-title">Not Issued Work Orders</h5>
-                            <h3 class="custom-work-card-text">30</h3> <!-- Replace with <?php echo $not_issued_count; ?> -->
+                            <h3 class="custom-work-card-text"><?php echo $not_issued_count; ?></h3>
                         </div>
                     </div>
                 </div>
@@ -145,8 +145,7 @@ if (isset($_SESSION['success'])) {
                                         <td>
                                             <a href="#"
                                                class="badge bg-primary ms-2 text-white text-decoration-none generate-pdf <?php echo $order['is_issued'] ? '' : 'disabled'; ?>"
-                                               data-work-order-id="<?php echo $order['id']; ?>"
-                                                <?php echo $order['is_issued'] ? '' : 'aria-disabled="true" style="pointer-events: none; opacity: 0.5;"'; ?>>
+                                               data-work-order-id="<?php echo $order['id']; ?>">
                                                 View Pdf
                                             </a>
                                         </td>
