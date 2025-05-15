@@ -15,7 +15,7 @@
 <body>
   <?php
   session_start();
-  require_once 'services/db_config.php'; // Include database configuration
+  require_once 'services/db_config.php';
 
   // Check if user is logged in
   if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
@@ -23,14 +23,33 @@
     exit();
   }
 
-  // Fetch contractors for dropdown
+  $workOrderId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+  // Fetch work order details
+  $workOrder = [];
+  $boqItems = [];
   try {
-    $stmt = $pdo->prepare("SELECT * FROM public.tbl_contractors ORDER BY id ASC");
-    $stmt->execute();
-    $contractors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch from tbl_workorders
+    $stmt = $pdo->prepare("SELECT id, cost, date_of_commencement, time_limit_months, created_at, contractor_id, contractor_name, ref_no, ref_date, se_ref_no, se_ref_date, amount_numeric, amount_words, is_issued, subject FROM public.tbl_workorders WHERE id = ?");
+    $stmt->execute([$workOrderId]);
+    $workOrder = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Fetch BOQ items from tbl_workorder_qty
+    $stmt = $pdo->prepare("SELECT id, workorder_id, item_id, quantity FROM public.tbl_workorder_qty WHERE workorder_id = ?");
+    $stmt->execute([$workOrderId]);
+    $boqItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Placeholder: Fetch item details (description, unit, rate) from a tbl_items table
+    // This requires a join or separate query; adjust based on your schema
+    // For now, I'll assume these are fetched dynamically via JavaScript or pre-loaded
   } catch (PDOException $e) {
-    error_log("Error fetching contractors: " . $e->getMessage());
-    $contractors = [];
+    error_log("Database error: " . $e->getMessage());
+    $workOrder = [];
+    $boqItems = [];
+  }
+
+  if (empty($workOrder)) {
+    die("Work order not found.");
   }
   ?>
 
@@ -39,80 +58,70 @@
   <?php include 'includes/side-bar.php'; ?>
 
   <main id="main" class="main">
-
     <section class="section dashboard">
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Interim Payment Bills Form</h5>
+              <h5 class="card-title">Apply Interim Payment Bill</h5>
 
               <!-- Form -->
-              <form action="process_interim_payment.php" method="POST">
+              <form action="process_apply_bill.php" method="POST">
+                <input type="hidden" name="workorder_id" value="<?php echo htmlspecialchars($workOrder['id']); ?>">
+
                 <div class="row">
-                  <!-- Contractor Name Dropdown -->
+                  <!-- Contractor Name (Read-only) -->
                   <div class="col-12 col-md-6">
                     <label for="contractor_name" class="form-label">Contractor Name <span class="text-danger">*</span></label>
-                    <select class="form-control" name="contractor_name" id="contractor_name" required>
-                      <option value="" disabled selected>Select Contractor</option>
-                      <?php foreach ($contractors as $contractor): ?>
-                        <option value="<?php echo htmlspecialchars($contractor['id']); ?>">
-                          <?php echo htmlspecialchars($contractor['name']); ?>
-                        </option>
-                      <?php endforeach; ?>
-                    </select>
+                    <input type="text" class="form-control" name="contractor_name" id="contractor_name" value="<?php echo htmlspecialchars($workOrder['contractor_name']); ?>" readonly required>
                   </div>
 
-                  <!-- Subject -->
+                  <!-- Subject (Read-only) -->
                   <div class="col-12 col-md-6">
                     <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="subject" id="subject" placeholder="Enter Subject" required>
+                    <input type="text" class="form-control" name="subject" id="subject" value="<?php echo htmlspecialchars($workOrder['subject']); ?>" readonly required>
                   </div>
 
-                  <!-- Date of Commencement -->
+                  <!-- Date of Commencement (Read-only) -->
                   <div class="col-12 col-md-6">
                     <label for="date_of_commencement" class="form-label">Date of Commencement <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control" name="date_of_commencement" id="date_of_commencement" required>
+                    <input type="date" class="form-control" name="date_of_commencement" id="date_of_commencement" value="<?php echo htmlspecialchars($workOrder['date_of_commencement']); ?>" readonly required>
                   </div>
 
-                  <!-- Cost -->
+                  <!-- Cost (Editable) -->
                   <div class="col-12 col-md-6">
                     <label for="cost" class="form-label">Cost <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="cost" id="cost" step="0.01" placeholder="Enter Cost" required>
+                    <input type="number" class="form-control" name="cost" id="cost" step="0.01" value="<?php echo htmlspecialchars($workOrder['cost'] ?? ''); ?>" placeholder="Enter Cost" required>
                   </div>
 
                   <!-- BOQ Items -->
                   <div class="col-12 mt-4">
                     <h6>BOQ Items</h6>
                     <div id="items-container">
-                      <!-- Initial Row -->
-                      <div class="d-flex align-items-end gap-2 mb-2 item-row">
-                        <div style="flex: 1; min-width: 150px;">
-                          <label class="form-label">Item No. <span class="text-danger">*</span></label>
-                          <select class="form-control item-select" name="items[0][id]" required disabled>
-                            <option value="" disabled selected>Select Item</option>
-                          </select>
+                      <?php foreach ($boqItems as $index => $item): ?>
+                        <div class="d-flex align-items-end gap-2 mb-2 item-row">
+                          <div style="flex: 1; min-width: 150px;">
+                            <label class="form-label">Item No. <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="items[<?php echo $index; ?>][id]" value="<?php echo htmlspecialchars($item['item_id']); ?>" readonly required>
+                          </div>
+                          <div style="flex: 2; min-width: 200px;">
+                            <label class="form-label">Description</label>
+                            <input type="text" class="form-control item-description" name="items[<?php echo $index; ?>][description]" placeholder="Enter description" value="" readonly>
+                          </div>
+                          <div style="flex: 1; min-width: 100px;">
+                            <label class="form-label">Quantity <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="items[<?php echo $index; ?>][quantity]" value="<?php echo htmlspecialchars($item['quantity']); ?>" readonly required>
+                          </div>
+                          <div style="flex: 1; min-width: 100px;">
+                            <label class="form-label">Unit <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control item-unit" name="items[<?php echo $index; ?>][unit]" placeholder="Unit" value="" readonly required>
+                          </div>
+                          <div style="flex: 1; min-width: 100px;">
+                            <label class="form-label">Rate <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control item-rate" name="items[<?php echo $index; ?>][rate]" step="0.01" placeholder="Rate" value="" readonly required>
+                          </div>
                         </div>
-                        <div style="flex: 2; min-width: 200px;">
-                          <label class="form-label">Description</label>
-                          <input type="text" class="form-control item-description" name="items[0][description]" placeholder="Enter description" readonly>
-                        </div>
-                        <div style="flex: 1; min-width: 100px;">
-                          <label class="form-label">Quantity <span class="text-danger">*</span></label>
-                          <input type="number" class="form-control" name="items[0][quantity]" placeholder="Qty" min="0.01" step="any" required>
-                        </div>
-                        <div style="flex: 1; min-width: 100px;">
-                          <label class="form-label">Unit <span class="text-danger">*</span></label>
-                          <input type="text" class="form-control item-unit" name="items[0][unit]" placeholder="Unit" readonly required>
-                        </div>
-                        <div style="flex: 1; min-width: 100px;">
-                          <label class="form-label">Rate <span class="text-danger">*</span></label>
-                          <input type="number" class="form-control item-rate" name="items[0][rate]" step="0.01" placeholder="Rate" readonly required>
-                        </div>
-                        <div style="min-width: 50px;">
-                          <button type="button" class="btn btn-secondary add-item-btn w-100">+</button>
-                        </div>
-                      </div>
+                      <?php endforeach; ?>
                     </div>
                   </div>
 
@@ -128,7 +137,6 @@
         </div>
       </div>
     </section>
-
   </main><!-- End #main -->
 
   <?php include 'includes/footer.php'; ?>
@@ -137,52 +145,31 @@
 
   <?php include 'includes/footer-src-files.php'; ?>
 
-  <!-- JavaScript for Dynamic BOQ Items -->
+  <!-- JavaScript to Fetch Item Details (Placeholder) -->
   <script>
-    let itemCount = 1;
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.item-row').forEach(row => {
+        const itemIdInput = row.querySelector('[name^="items"][name$="[id]"]');
+        const descriptionInput = row.querySelector('.item-description');
+        const unitInput = row.querySelector('.item-unit');
+        const rateInput = row.querySelector('.item-rate');
+        const itemId = itemIdInput.value;
 
-    document.querySelectorAll('.add-item-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        const container = document.getElementById('items-container');
-        const newRow = document.createElement('div');
-        newRow.className = 'd-flex align-items-end gap-2 mb-2 item-row';
-        newRow.innerHTML = `
-          <div style="flex: 1; min-width: 150px;">
-            <label class="form-label">Item No. <span class="text-danger">*</span></label>
-            <select class="form-control item-select" name="items[${itemCount}][id]" required disabled>
-              <option value="" disabled selected>Select Item</option>
-            </select>
-          </div>
-          <div style="flex: 2; min-width: 200px;">
-            <label class="form-label">Description</label>
-            <input type="text" class="form-control item-description" name="items[${itemCount}][description]" placeholder="Enter description" readonly>
-          </div>
-          <div style="flex: 1; min-width: 100px;">
-            <label class="form-label">Quantity <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" name="items[${itemCount}][quantity]" placeholder="Qty" min="0.01" step="any" required>
-          </div>
-          <div style="flex: 1; min-width: 100px;">
-            <label class="form-label">Unit <span class="text-danger">*</span></label>
-            <input type="text" class="form-control item-unit" name="items[${itemCount}][unit]" placeholder="Unit" readonly required>
-          </div>
-          <div style="flex: 1; min-width: 100px;">
-            <label class="form-label">Rate <span class="text-danger">*</span></label>
-            <input type="number" class="form-control item-rate" name="items[${itemCount}][rate]" step="0.01" placeholder="Rate" readonly required>
-          </div>
-          <div style="min-width: 50px;">
-            <button type="button" class="btn btn-danger remove-item-btn w-100">-</button>
-          </div>
-        `;
-        container.appendChild(newRow);
-        itemCount++;
-
-        // Add event listener for the new remove button
-        newRow.querySelector('.remove-item-btn').addEventListener('click', function() {
-          container.removeChild(newRow);
-        });
+        if (itemId) {
+          // Placeholder: Fetch item details via AJAX
+          fetch(`get_item_details.php?id=${itemId}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                descriptionInput.value = data.description || '';
+                unitInput.value = data.unit || '';
+                rateInput.value = data.rate || '';
+              }
+            })
+            .catch(error => console.error('Error fetching item details:', error));
+        }
       });
     });
   </script>
-
 </body>
 </html>
