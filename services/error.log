@@ -8,3 +8,8 @@
 
 [15-May-2025 09:55:12 Europe/Berlin] Login successful for username: admin, role_id: 1
 [15-May-2025 10:02:34 Europe/Berlin] Login successful for username: sub_engineer, role_id: 2
+[15-May-2025 10:05:57 Europe/Berlin] Login successful for username: contractor, role_id: 4
+[15-May-2025 10:19:05 Europe/Berlin] PHP Warning:  Undefined array key "contractor_id" in C:\xampp\htdocs\cnw_dpp\services\fire_login.php on line 61
+[15-May-2025 10:19:05 Europe/Berlin] Login successful for username: contractor, role_id: 4
+[15-May-2025 10:21:09 Europe/Berlin] Login successful for username: contractor, role_id: 4
+[15-May-2025 10:22:40 Europe/Berlin] Login successful for username: admin, role_id: 1
